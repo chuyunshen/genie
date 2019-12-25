@@ -30,7 +30,6 @@ class FBUser:
                          thread_id=uid,
                          thread_type=ThreadType.USER)
 
-
     def send_scheduled_message(self, uid, message, today, scheduled_date):
         """
         uid: str of Facebook userid
@@ -45,8 +44,45 @@ class FBUser:
     def set_birthday_calendar(birthday_calendar):
         self.birthday_calendar = birthday_calendar
 
-    def set_holiday_calendar(holiday_calendar):
-        self.holiday_calendar = holiday_calendar
+    def add_holiday_calendar(holiday_calendar):
+        self.holiday_calendar.append(holiday_calendar)
+
+    def delete_holiday_calendar_by_index(index):
+        self.holiday_calendar.pop(index)
+
+    def find_uid_by_name(self, name):
+        for event in self.birthday_calendar.events:
+            if name == event.name.split("'")[0]:
+                return uid
+        raise NameError
+
+    def store_birthday_message_for_uid(self, uid, message):
+        for event in self.birthday_calendar.events:
+            if event.uid == uid:
+                event.description = message
+                return
+        raise NameError
+
+    def store_holiday_message_for_uid(self, uid):
+        # need to verify the uid is valid later
+        uid_exists = True
+        if not uid_exists:
+            raise NameError
+        for event in self.holiday_calendar.events:
+            event[uid] = message
+
+    def send_all_scheduled_birthday_messages(self, today):
+        for event in self.birthday_calendar.events:
+            if event.description:
+                self.send_scheduled_message(event.uid, event.description,
+                        today, event.begin)
+
+    def send_all_scheduled_holiday_messages(self, today):
+        for event in self.holiday_calendar.events:
+            if event.description:
+                for uid in event.description:
+                    self.send_scheduled_message(uid, event.description[uid],
+                        today, event.begin)
 
 def _read_account_details() -> List[str]:
     """ Helper method to read username and password from

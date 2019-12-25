@@ -14,13 +14,16 @@ class AbstractCalendar:
 class BirthdayCalendar(AbstractCalendar):
     """ A calender consisting of all birthdays of a FBUser.
     events: a set of ics.Event. Important attributes of an Event include name,
-    uid (facebook userid), and begin (birthday, arrow format).
+    uid (facebook userid), begin (birthday, arrow format), and
+    description(contains birthday message, str, initially set to None).
     """
 
     def parse_ics(self, calendar_dir):
         """ Parse a calendar from ics format"""
         g = open(calendar_dir, 'rb')
         cal = Calendar(g.read().decode())
+        for event in cal.events:
+            event.description = None
         return cal.events
 
     def get_calendar(self):
@@ -46,11 +49,15 @@ class HolidayCalendar(AbstractCalendar):
     "https://www.calendarlabs.com/ical-calendar/ics/39/Canada_Holidays.ics"
 
     events: a set of ics.Event. Important attributes of an Event include name
-    (name of the holiday) and begin (holiday date, arrow format).
+    (name of the holiday), begin (holiday date, arrow format),
+    and description(contains a dictionary mapping uid to holiday message, initially set to an empty
+    dictionary).
     """
 
     def parse_ics(self, calendar_url):
         """ Parse a calendar from ics format"""
         cal = Calendar(requests.get(calendar_url).text)
+        for event in cal.events:
+            event.description = {}
         return cal.events
 

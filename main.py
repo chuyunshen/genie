@@ -13,7 +13,9 @@ def main():
     user = FBUser(birthday_cal, holiday_cal)
     # user.send_message("100004947462023", "Hey this is a test")
     today = datetime.date(2020, 8, 29)
-    user.send_scheduled_message("100004947462023", "Happy birthday!", today, birthday)
+    # user.send_scheduled_message("100004947462023", "Happy birthday!", today, birthday)
+    user.store_birthday_message_for_uid("100004947462023", "Be Happy")
+    user.send_all_scheduled_birthday_messages(today)
 
 if __name__== "__main__":
     main()
