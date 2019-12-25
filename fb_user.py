@@ -1,6 +1,7 @@
 from fbchat import Client
 from fbchat.models import *
 from typing import List, Tuple
+from fb2cal.src import fb2cal
 
 
 class FBUser:
@@ -10,10 +11,9 @@ class FBUser:
     """
     _username: str
     _password: str
-    _birthdays: BirthdayCalendar
     client: Client
 
-    def __init__(self) -> None:
+    def __init__(self, birthday_calendar, holiday_calendar) -> None:
         """ Initialize a new Facebook user with the username and
         password stored in the account_details file"""
         account_details = _read_account_details()
@@ -21,17 +21,32 @@ class FBUser:
         self._password = account_details[1]
         self.client = _login(self)
         print("{} is logged in".format(self.client.uid))
+        self.birthday_calendar = birthday_calendar
+        self.holiday_calendar = [holiday_calendar]
 
-    def send_message(self) -> None:
+    def send_message(self, uid, message) -> None:
         """ Send a message"""
-        self.client.send(Message(text="Hey this is a test"),
-                         thread_id=self.client.uid,
+        self.client.send(Message(text=message),
+                         thread_id=uid,
                          thread_type=ThreadType.USER)
 
-    def get_calendar(self):
-        """ Get birthday calendar from Facebook.
+
+    def send_scheduled_message(self, uid, message, today, scheduled_date):
         """
-        pass
+        uid: str of Facebook userid
+        message: str
+        today: datetime.date object
+        scheduled_date: arrow object
+        """
+        if today == scheduled_date.date():
+            self.send_message(uid, message)
+            print("Message to {} has been sent.".format(uid))
+
+    def set_birthday_calendar(birthday_calendar):
+        self.birthday_calendar = birthday_calendar
+
+    def set_holiday_calendar(holiday_calendar):
+        self.holiday_calendar = holiday_calendar
 
 def _read_account_details() -> List[str]:
     """ Helper method to read username and password from
