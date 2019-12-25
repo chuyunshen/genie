@@ -10,6 +10,7 @@ class FBUser:
     """
     _username: str
     _password: str
+    _birthdays: BirthdayCalendar
     client: Client
 
     def __init__(self) -> None:
@@ -27,6 +28,10 @@ class FBUser:
                          thread_id=self.client.uid,
                          thread_type=ThreadType.USER)
 
+    def get_calendar(self):
+        """ Get birthday calendar from Facebook.
+        """
+        pass
 
 def _read_account_details() -> List[str]:
     """ Helper method to read username and password from
