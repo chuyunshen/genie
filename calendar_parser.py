@@ -24,6 +24,7 @@ class BirthdayCalendar(AbstractCalendar):
         cal = Calendar(g.read().decode())
         for event in cal.events:
             event.description = None
+        g.close()
         return cal.events
 
     def get_calendar(self):
