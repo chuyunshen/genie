@@ -11,3 +11,6 @@ python_dateutil
 google_api_python_client
 google-auth-oauthlib
 oauth2client
+selenium==3.141.0
+pyyaml
+pytest

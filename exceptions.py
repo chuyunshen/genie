@@ -1,0 +1,2 @@
+class AccountDetailsNotFoundException(Exception):
+    pass
