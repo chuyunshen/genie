@@ -1,12 +1,12 @@
 import os
 
-from src.fb_user import FBUser
 import pytest
 import datetime
+import tools
 
 
 def test_fb_user():
-    user = FBUser()
+    user = tools.set_up_fbuser()
     name = "Chuyun Shen"
     uid = user.get_uid_by_name(name)
     birthday = user.get_birthday_by_uid(uid)
@@ -20,4 +20,4 @@ def test_fb_user():
 
 if __name__ == "__main__":
     print(f'Running tests from {os.getcwd()}')
-    pytest.main(['src/tests/test_fbuser.py'])
+    pytest.main(['src/test/test_fbuser.py'])

@@ -6,12 +6,7 @@ from ics import Calendar
 from src.exceptions import *
 import os
 import configparser
-
-TEST = True
-if TEST:
-    import tests.config_test as config
-else:
-    from src import config
+from settings import *
 
 
 class FBUser:
@@ -24,7 +19,7 @@ class FBUser:
     birthday_calendar: Calendar
     client: Client
 
-    def __init__(self) -> None:
+    def __init__(self, username, password) -> None:
         """ Initialize a new Facebook user with the username and
         password stored in the account_details file.
 
@@ -33,21 +28,10 @@ class FBUser:
         begin (birthday, arrow format), and description (contains birthday
         message, str).
         """
-        account_details = _read_account_details()
-        if not account_details:
-            raise AccountDetailsNotFoundException("No account detail is found.")
-        self._username = account_details[0]
-        self._password = account_details[1]
+        self._username = username
+        self._password = password
         self.client = _login(self)
         print("{} is logged in".format(self.client.uid))
-
-        # update config file for fb2cal
-        # config = configparser.ConfigParser()
-        # config.read(config.config_dir)
-        # config.set("AUTH", "fb_email", account_details[0])
-        # config.set("AUTH", "fb_pass", account_details[1])
-        # with open(config.config_dir, "w") as f:
-        #     config.write(f)
 
         # if there exists a calendar, read in, otherwise, download from facebook
         if os.path.exists(config.calendar_dir):
@@ -131,15 +115,6 @@ class FBUser:
         for event in self.birthday_calendar.events:
             if event.uid == uid:
                 return event.begin
-
-
-def _read_account_details() -> List[str]:
-    """ Helper method to read username and password from
-    account_details.txt file and return them as a list."""
-    f = open(config.account_details_path, "r")
-    account_details = f.read().splitlines()
-    f.close()
-    return account_details
 
 
 def _login(self) -> Client:
