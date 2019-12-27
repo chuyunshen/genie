@@ -1,4 +1,6 @@
-from fb_user import FBUser
+import os
+
+from src.fb_user import FBUser
 import pytest
 import datetime
 
@@ -12,9 +14,10 @@ def test_fb_user():
     assert birthday.date() == today
     message = "happy bday"
     user.schedule_birthday_message_for_uid(uid, message)
-    user.save_calendar()
-    # user.send_all_scheduled_birthday_messages(today)
+    # user.save_calendar()
+    user.send_all_scheduled_birthday_messages(today)
 
 
 if __name__ == "__main__":
-    pytest.main(['test.py'])
+    print(f'Running tests from {os.getcwd()}')
+    pytest.main(['src/tests/test_fbuser.py'])
