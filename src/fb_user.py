@@ -1,15 +1,15 @@
 from datetime import datetime, timedelta
-
 from arrow import Arrow
 from fbchat import Client
 from fbchat.models import *
-from typing import Dict
+from typing import Dict, List
 from fb2cal.src import fb2cal
 from ics import Calendar, Event
 import os
 from settings import *
 from dateutil.relativedelta import relativedelta
 from ics.grammar.parse import ContentLine
+import random
 
 
 class FBUser:
@@ -182,6 +182,11 @@ class FBUser:
         fb2cal.main2()
         # dont do this too often or else the account will be banned
 
+    def select_random_wish(self, wish_type) -> str:
+        """Returns a random birthday wish."""
+        wishes = read_wishes(wish_type)
+        return random.choice(wishes)
+
 
 def _login(self) -> Client:
     """ Helper method to login to a Facebook account using a username and
@@ -228,3 +233,15 @@ class CustomClient(Client):
             if data["type"] in ["user", "friend"]:
                 users.append(User._from_all_fetch(data))
         return users
+
+
+def read_wishes(wish_type) -> List[str]:
+    """"Reads in birthday wishes. If wish_type is 'funny', funny birthday
+    wishes are read in, otherwise, serious birthday wishes are read in."""
+    if wish_type == 'funny':
+        f = open(config.funny_birthday_wish_path, "r")
+    else:
+        f = open(config.serious_birthday_wish_path, "r")
+    wishes = f.read().splitlines()
+    f.close()
+    return wishes

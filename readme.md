@@ -62,6 +62,5 @@ genie
     │   ├── __init__.py
     │   ├── config_test.py
     │   └── test_fbuser.py
-    ├── tools.py
-    └── wish_generator.py
+    └── tools.py
 ```
