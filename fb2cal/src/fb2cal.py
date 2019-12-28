@@ -67,7 +67,7 @@ class Birthday:
 def main(logger):
 
     # Set CWD to script directory
-    os.chdir(sys.path[0])
+    # os.chdir(sys.path[0])
 
     # Read config
     CONFIG_FILE_NAME = 'config.ini'
