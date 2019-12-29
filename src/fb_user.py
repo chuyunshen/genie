@@ -5,11 +5,11 @@ from fbchat.models import *
 from typing import Dict, List
 from fb2cal.src import fb2cal
 from ics import Calendar, Event
-import os
 from settings import *
 from dateutil.relativedelta import relativedelta
 from ics.grammar.parse import ContentLine
 import random
+import tools
 
 
 class FBUser:
@@ -22,7 +22,7 @@ class FBUser:
     birthday_calendar: Calendar
     client: Client
 
-    def __init__(self, username, password) -> None:
+    def __init__(self, username: str, password: str, cal: Calendar) -> None:
         """ Initialize a new Facebook user with the username and
         password stored in the account_details file.
 
@@ -33,14 +33,9 @@ class FBUser:
         """
         self._username = username
         self._password = password
+        self.birthday_calendar = cal
         self.client = _login(self)
         print("{} is logged in".format(self.client.uid))
-
-        # if there does not exist a calendar, download from facebook, otherwise,
-        # read in
-        if not os.path.exists(config.calendar_dir):
-            self.download_birthday_calendar()
-        self.birthday_calendar = _parse_ics()
 
     def send_message(self, uid, message) -> None:
         """ Send a message"""
@@ -73,7 +68,7 @@ class FBUser:
         (set to None).
         """
         self.download_birthday_calendar()
-        new_cal = _parse_ics()
+        new_cal = tools.parse_ics()
         all_old_uids = [event.uid for event in self.birthday_calendar.events]
         all_new_uids = [event.uid for event in new_cal.events]
 
@@ -187,6 +182,11 @@ class FBUser:
         wishes = read_wishes(wish_type)
         return random.choice(wishes)
 
+    def logout(self) -> None:
+        """ Helper method to logout from a Facebook account"""
+        self.client.logout()
+        print("User is logged out")
+
 
 def _login(self) -> Client:
     """ Helper method to login to a Facebook account using a username and
@@ -194,14 +194,7 @@ def _login(self) -> Client:
     return CustomClient(self._username, self._password)
 
 
-def _parse_ics() -> Calendar:
-    """ Parse a calendar from ics format"""
-    g = open(config.calendar_dir, 'rb')
-    cal = Calendar(g.read().decode())
-    for event in cal.events:
-        event.description = None
-    g.close()
-    return cal
+
 
 
 def get_birthday_by_uid(uid, birthday_calendar) -> Arrow:

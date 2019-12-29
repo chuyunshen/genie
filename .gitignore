@@ -3,7 +3,8 @@ env
 config/account_details.txt
 config/test/account_details.txt
 config/test/birthdays.ics
-fb2cal/config/config.ini
+./fb2cal/config/config.ini
 log
 __pycache__/
 .pyc
+fb2cal.log
