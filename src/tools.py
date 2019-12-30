@@ -44,12 +44,8 @@ def set_fb2cal_config_fb_email_fb_pass(login: str, password: str) -> None:
 
 def parse_ics() -> Calendar:
     """ Parse a calendar from ics format"""
-    g = open(config.calendar_dir, 'rb')
-    cal = Calendar(g.read().decode())
-    for event in cal.events:
-        event.description = None
-    g.close()
-    return cal
+    with open(config.calendar_dir, 'rb') as g:
+        return Calendar(g.read().decode())
 
 
 def set_up_fbuser() -> FBUser:
