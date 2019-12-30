@@ -37,6 +37,30 @@ class FBUser:
         self.client = _login(self)
         print("{} is logged in".format(self.client.uid))
 
+    def get_client(self) -> Client:
+        return self.client
+
+    def get_uid_by_name(self, name) -> str:
+        """ Finds a Facebook friend's uid by name. If the name does not exist
+        in the friend list, NameError is raised.
+        """
+        friends = self.get_friend_dict()
+        for uid in friends:
+            if name == friends[uid][0]:
+                return uid
+        raise NameError
+
+    def get_friend_dict(self) -> Dict:
+        """ Gets a dictionary of friends mapping from their uid to their name.
+        """
+        friend_dict = {}
+        user_list = [user for user in self.client.fetchAllUsers() if
+                     user.is_friend]
+
+        for user in user_list:
+            friend_dict[user.uid] = [user.name, user.url, user.photo]
+        return friend_dict
+
     def send_message(self, uid, message) -> None:
         """ Send a message"""
         self.client.send(Message(text=message),
@@ -54,6 +78,13 @@ class FBUser:
         if today == scheduled_date.date():
             self.send_message(uid, message)
             print("Message to {} has been sent.".format(uid))
+
+    def send_all_scheduled_birthday_messages(self, today) -> None:
+        """Checks and sends all scheduled birthday messages."""
+        for event in self.birthday_calendar.events:
+            if event.description:
+                self.send_scheduled_message(event.uid, event.description,
+                                            today, event.begin)
 
     def update_birthday_calendar(self) -> None:
         """ Updates the birthday calendar by checking for duplicated events and
@@ -117,7 +148,7 @@ class FBUser:
         # current month or not
         # Also pad day, month with leading zeros to 2dp
         year = today.year if birthday.month >= today.month else (
-                    today + relativedelta(years=1)).year
+                today + relativedelta(years=1)).year
         month = '{:02d}'.format(birthday.month)
         day = '{:02d}'.format(birthday.day)
         birthday_event.begin = f'{year}-{month}-{day} 00:00:00'
@@ -133,16 +164,6 @@ class FBUser:
         with open(config.calendar_dir, 'w') as f:
             f.writelines(self.birthday_calendar)
 
-    def get_uid_by_name(self, name) -> str:
-        """ Finds a Facebook friend's uid by name. If the name does not exist
-        in the friend list, NameError is raised.
-        """
-        friends = self.get_friend_dict()
-        for uid in friends:
-            if name == friends[uid][0]:
-                return uid
-        raise NameError
-
     def schedule_birthday_message_for_uid(self, uid, message) -> None:
         """Schedules a birthday message for Facebook friend with the given uid.
         """
@@ -151,24 +172,6 @@ class FBUser:
                 event.description = message
                 return
         raise NameError
-
-    def send_all_scheduled_birthday_messages(self, today) -> None:
-        """Checks and sends all scheduled birthday messages."""
-        for event in self.birthday_calendar.events:
-            if event.description:
-                self.send_scheduled_message(event.uid, event.description,
-                                            today, event.begin)
-
-    def get_friend_dict(self) -> Dict:
-        """ Gets a dictionary of friends mapping from their uid to their name.
-        """
-        friend_dict = {}
-        user_list = [user for user in self.client.get_contact_list() if
-                     user.is_friend]
-
-        for user in user_list:
-            friend_dict[user.uid] = [user.name, user.url, user.photo]
-        return friend_dict
 
     def download_birthday_calendar(self) -> None:
         """ Gets/updates birthday calendar from Facebook and saves the calendar at
@@ -191,7 +194,7 @@ class FBUser:
 def _login(self) -> Client:
     """ Helper method to login to a Facebook account using a username and
     password from account_details"""
-    return CustomClient(self._username, self._password)
+    return Client(self._username, self._password)
 
 
 def get_birthday_by_uid(uid, birthday_calendar) -> Arrow:
@@ -200,29 +203,6 @@ def get_birthday_by_uid(uid, birthday_calendar) -> Arrow:
     for event in birthday_calendar.events:
         if event.uid == uid:
             return event.begin
-
-
-class CustomClient(Client):
-    """CustomClient inherits from Client, to add on a method to get a list
-    of Facebook/Messenger friends."""
-
-    def get_contact_list(self):
-        """Returns all contacts (friends or non-friends) of the client.
-
-        Returns:
-            list: :class:`User` objects
-
-        Raises:
-            FBchatException: If request failed
-        """
-        data = {"viewer": self._uid}
-        j = self._payload_post("/chat/user_info_all", data)
-
-        users = []
-        for data in j.values():
-            if data["type"] in ["user", "friend"]:
-                users.append(User._from_all_fetch(data))
-        return users
 
 
 def read_wishes(wish_type) -> List[str]:
