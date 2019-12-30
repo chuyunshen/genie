@@ -66,24 +66,19 @@ class FBUser:
                          thread_id=uid,
                          thread_type=ThreadType.USER)
 
-    def send_scheduled_message(self, uid, message, today,
-                               scheduled_date) -> None:
-        """
-        uid: str of Facebook user id
-        message: str
-        today: datetime.date object
-        scheduled_date: arrow object
-        """
-        if today == scheduled_date.date():
-            self.send_message(uid, message)
-            print("Message to {} has been sent.".format(uid))
+    def send_scheduled_message(self, event) -> None:
+        """ Send a scheduled birthday message and update the birthday's date
+        to the next year's birthday."""
+        self.send_message(event.uid, event.description)
+        event.begin = event.begin.shift(years=1)
+        print("Message to {} has been sent.".format(event.uid))
+        print("Birthday date is updated to {}.".format(event.begin))
 
     def send_all_scheduled_birthday_messages(self, today) -> None:
         """Checks and sends all scheduled birthday messages."""
         for event in self.birthday_calendar.events:
-            if event.description:
-                self.send_scheduled_message(event.uid, event.description,
-                                            today, event.begin)
+            if event.description and today == event.begin.date():
+                self.send_scheduled_message(event)
 
     def update_birthday_calendar(self) -> None:
         """ Updates the birthday calendar by checking for duplicated events and
@@ -97,7 +92,7 @@ class FBUser:
         previously saved birthday message under attribute description removed
         (set to None).
         """
-        self.download_birthday_calendar()
+        download_birthday_calendar()
         new_cal = tools.parse_ics()
         all_old_uids = [event.uid for event in self.birthday_calendar.events]
         all_new_uids = [event.uid for event in new_cal.events]
@@ -176,13 +171,6 @@ class FBUser:
                 return
         raise NameError
 
-    def download_birthday_calendar(self) -> None:
-        """ Gets/updates birthday calendar from Facebook and saves the calendar at
-        "fb2cal/src/calendar.ics".
-        """
-        fb2cal.main2()
-        # dont do this too often or else the account will be banned
-
     def logout(self) -> None:
         """ Helper method to logout from a Facebook account"""
         self.client.logout()
@@ -202,5 +190,12 @@ def get_birthday_by_uid(uid, birthday_calendar) -> Arrow:
         if event.uid == uid:
             return event.begin
 
+
+def download_birthday_calendar() -> None:
+    """ Gets/updates birthday calendar from Facebook and saves the calendar at
+    "fb2cal/src/calendar.ics".
+    """
+    fb2cal.main2()
+    # dont do this too often or else the account will be banned
 
 
