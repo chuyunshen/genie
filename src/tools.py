@@ -6,7 +6,7 @@ import exceptions
 import configparser
 from ics import Calendar
 from fb2cal.src import fb2cal
-
+import random
 
 def account_details_file_exists() -> bool:
     """Check if account details file exists"""
@@ -76,3 +76,21 @@ def set_up_fbuser() -> FBUser:
     # create and return a new instance of FBUser
     user = FBUser(account_details[0], account_details[1], cal)
     return user
+
+
+def read_wishes(wish_type) -> List[str]:
+    """"Reads in birthday wishes. If wish_type is 'funny', funny birthday
+    wishes are read in, otherwise, serious birthday wishes are read in."""
+    if wish_type == 'funny':
+        f = open(config.funny_birthday_wish_path, "r")
+    else:
+        f = open(config.serious_birthday_wish_path, "r")
+    wishes = f.read().splitlines()
+    f.close()
+    return wishes
+
+
+def select_random_wish(wish_type) -> str:
+    """Returns a random birthday wish."""
+    wishes = read_wishes(wish_type)
+    return random.choice(wishes)

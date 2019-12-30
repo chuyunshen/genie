@@ -8,7 +8,6 @@ from ics import Calendar, Event
 from settings import *
 from dateutil.relativedelta import relativedelta
 from ics.grammar.parse import ContentLine
-import random
 import tools
 
 
@@ -180,11 +179,6 @@ class FBUser:
         fb2cal.main2()
         # dont do this too often or else the account will be banned
 
-    def select_random_wish(self, wish_type) -> str:
-        """Returns a random birthday wish."""
-        wishes = read_wishes(wish_type)
-        return random.choice(wishes)
-
     def logout(self) -> None:
         """ Helper method to logout from a Facebook account"""
         self.client.logout()
@@ -205,13 +199,4 @@ def get_birthday_by_uid(uid, birthday_calendar) -> Arrow:
             return event.begin
 
 
-def read_wishes(wish_type) -> List[str]:
-    """"Reads in birthday wishes. If wish_type is 'funny', funny birthday
-    wishes are read in, otherwise, serious birthday wishes are read in."""
-    if wish_type == 'funny':
-        f = open(config.funny_birthday_wish_path, "r")
-    else:
-        f = open(config.serious_birthday_wish_path, "r")
-    wishes = f.read().splitlines()
-    f.close()
-    return wishes
+
