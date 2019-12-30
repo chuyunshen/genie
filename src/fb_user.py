@@ -127,17 +127,11 @@ class FBUser:
             uid: str
             birthday: datetime
         """
-        # Initialize birthday_event to a new event
-        birthday_event = Event()
         # If the uid exists in the current birthday_calendar, we will delete
         # the old event.
-        uid_exists = False
-        for event in self.birthday_calendar.events:
-            if event.uid == uid:
-                birthday_event = event
-                uid_exists = True
-        if uid_exists:
-            self.birthday_calendar.events.remove(birthday_event)
+        self.delete_birthday_by_uid(uid)
+        # Initialize birthday_event to a new event
+        birthday_event = Event()
         birthday_event.uid = uid
         birthday_event.name = "{}'s Birthday".format(
             self.get_friend_dict()[uid][0])
@@ -145,9 +139,9 @@ class FBUser:
         today = datetime.today()
         # Calculate the year as this year or next year based on if its past
         # current month or not
-        # Also pad day, month with leading zeros to 2dp
         year = today.year if birthday.month >= today.month else (
                 today + relativedelta(years=1)).year
+        # Pad day, month with leading zeros to 2dp
         month = '{:02d}'.format(birthday.month)
         day = '{:02d}'.format(birthday.day)
         birthday_event.begin = f'{year}-{month}-{day} 00:00:00'
@@ -156,6 +150,16 @@ class FBUser:
         birthday_event.extra.append(
             ContentLine(name='RRULE', value='FREQ=YEARLY'))
         self.birthday_calendar.events.add(birthday_event)
+
+    def delete_birthday_by_uid(self, uid) -> None:
+        """Delete a birthday event by uid."""
+        uid_exists = False
+        for event in self.birthday_calendar.events:
+            if event.uid == uid:
+                birthday_event = event
+                uid_exists = True
+        if uid_exists:
+            self.birthday_calendar.events.remove(birthday_event)
 
     def save_calendar(self) -> None:
         """ Save the updated birthday calendar to calendar_dir.
