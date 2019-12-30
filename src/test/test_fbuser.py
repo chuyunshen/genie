@@ -1,13 +1,12 @@
 import os
-
 import pytest
 import datetime
 import tools
-from src.fb_user import get_birthday_by_uid
+from fb_user import get_birthday_by_uid
 import arrow
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(scope="module")
 def setup():
     user = tools.set_up_fbuser()
     name = "Natalia Moran"
@@ -27,7 +26,6 @@ def test_send_messages(setup):
     user.schedule_birthday_message_for_uid(uid, message)
     user.save_calendar()
     user.send_all_scheduled_birthday_messages(today)
-    user.logout()
 
     # Assert
     assert birthday.date() == today
@@ -40,10 +38,7 @@ def test_get_uid_by_name(setup):
     # Assert
     assert '1104705831' == user.get_uid_by_name(name)
     with pytest.raises(Exception) as e_info:
-       user.get_uid_by_name('test_name')
-
-    # Cleanup
-    user.logout()
+        user.get_uid_by_name('test_name')
 
 
 def test_set_birthday_by_uid(setup):
@@ -56,18 +51,23 @@ def test_set_birthday_by_uid(setup):
 
     # Assert
     assert arrow.get(birthday) == get_birthday_by_uid('1104705831',
-                                           user.birthday_calendar)
-    # Cleanup
-    user.logout()
+                                                      user.birthday_calendar)
 
 
 def test_update_birthday_calendar(setup):
     # Arrange
     user, name, message = setup
-    user.logout()
 
     # Act
     user.update_birthday_calendar()
+
+
+def test_logout(setup):
+    # Arrange
+    user, name, message = setup
+
+    # Act
+    user.logout()
 
 
 if __name__ == "__main__":
