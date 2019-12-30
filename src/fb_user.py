@@ -194,9 +194,6 @@ def _login(self) -> Client:
     return CustomClient(self._username, self._password)
 
 
-
-
-
 def get_birthday_by_uid(uid, birthday_calendar) -> Arrow:
     """ Returns the birthday of a specific uid, as an arrow object
     """
