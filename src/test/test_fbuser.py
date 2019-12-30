@@ -40,7 +40,7 @@ def test_get_uid_by_name(setup):
     # Assert
     assert '1104705831' == user.get_uid_by_name(name)
     with pytest.raises(Exception) as e_info:
-       user.get_uid_by_name('kukunla')
+       user.get_uid_by_name('test_name')
 
     # Cleanup
     user.logout()
