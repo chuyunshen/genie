@@ -8,3 +8,7 @@ class FB2CalConfigNotFoundException(Exception):
 
 class DownloadDateFileNotFoundException(Exception):
     pass
+
+
+class FriendNotFoundException(Exception):
+    pass
