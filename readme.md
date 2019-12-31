@@ -29,8 +29,11 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
-* Create a file `account_details.txt` under `docs` directory. 
+* Create a file `account_details.txt` under `config` directory. 
 This file should have two lines: Facebook username and Facebook password.
+
+* Create a file `download_date.txt` under `config` directory. 
+Leave this file empty.
 
 ## What's included
 ```
