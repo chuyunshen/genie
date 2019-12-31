@@ -54,6 +54,19 @@ class FBUser:
             return uids
         raise NameError
 
+    def get_name_by_uid(self, uid: int) -> str:
+        """
+        Find a FB friend with the provided uid and return her/his name
+        If the uid is not found in the FB friends list, raise an exception
+        :param uid:     uid to find
+        :return:        friend's name associated with the uid
+        """
+        friends = self.get_friend_dict()
+        if uid in friends:
+            return friends[uid][0]
+        else:
+            raise exceptions.FriendNotFoundException
+
     def get_friend_dict(self) -> Dict:
         """ Gets a dictionary of friends mapping from their uid to their name.
         """
@@ -160,10 +173,13 @@ class FBUser:
         :return:                None
         """
         # find the friend's name per UID
-        # if the UID is not in the FB friends list, raise an exception
-        name = self.get_friend_dict()[uid][0]
-        if not name:
-            raise exceptions.FriendNotFoundException
+        # if the UID is not in the FB friends list, return
+        try:
+            name = self.get_name_by_uid(uid)
+        except exceptions.FriendNotFoundException:
+            print(f"UID {uid} is not in your friends list.")
+            return
+
         # add a new event to the birthdays calendar
         self.birthday_calendar = add_event_to_calendar(self.birthday_calendar,
                                                        uid,
