@@ -100,7 +100,7 @@ def download_birthday_calendar() -> None:
             print("FB birthdays calendar cannot be downloaded twice a day")
 
 
-def read_wishes(wish_type) -> List[str]:
+def _read_wishes(wish_type) -> List[str]:
     """"Reads in birthday wishes. If wish_type is 'funny', funny birthday
     wishes are read in, otherwise, serious birthday wishes are read in."""
     if wish_type == 'funny':
@@ -119,7 +119,7 @@ Helper methods for filtering.
 
 def select_random_wish(wish_type) -> str:
     """Returns a random birthday wish."""
-    wishes = read_wishes(wish_type)
+    wishes = _read_wishes(wish_type)
     return random.choice(wishes)
 
 
