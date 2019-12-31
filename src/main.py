@@ -1,6 +1,11 @@
 from tools import set_up_fbuser
 
 
+"""
+This file is the entry point for the program
+"""
+
+
 def main():
     pass
     # # here is a draft of main
