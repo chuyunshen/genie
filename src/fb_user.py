@@ -9,6 +9,8 @@ from settings import *
 from dateutil.relativedelta import relativedelta
 from ics.grammar.parse import ContentLine
 import tools
+from os import path
+import exceptions
 
 
 class FBUser:
@@ -192,10 +194,18 @@ def get_birthday_by_uid(uid, birthday_calendar) -> Arrow:
 
 
 def download_birthday_calendar() -> None:
-    """ Gets/updates birthday calendar from Facebook and saves the calendar at
-    "fb2cal/src/calendar.ics".
+    """ Gets a birthday calendar from Facebook and saves it
     """
-    fb2cal.main2()
-    # dont do this too often or else the account will be banned
-
-
+    if not path.exists(config.download_date):
+        raise exceptions.DownloadDateFileNotFoundException
+    with open(config.download_date, 'r+') as f:
+        download_date = f.read()
+        today = datetime.today().strftime('%Y-%m-%d')
+        if not download_date or download_date != today:
+            fb2cal.main2()
+            f.seek(0)
+            f.write(today)
+            f.truncate()
+            print("FB birthdays calendar is downloaded")
+        else:
+            print("FB birthdays calendar cannot be downloaded twice a day")
