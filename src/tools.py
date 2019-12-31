@@ -7,6 +7,15 @@ import configparser
 from ics import Calendar
 from fb2cal.src import fb2cal
 import random
+from datetime import datetime
+
+""" 
+Methods to check the following files existence:
+- account_details.txt
+- download_date.txt
+- config.ini
+- birthdays.ics
+"""
 
 
 def account_details_file_exists() -> bool:
@@ -22,6 +31,22 @@ def fb2cal_config_exists() -> bool:
 def ics_file_exists() -> bool:
     """Check if ics file exists"""
     return path.exists(config.calendar_dir)
+
+
+def download_date_file_exists() -> bool:
+    """Check if download_date.txt file exists"""
+    return path.exists(config.download_date)
+
+
+""" 
+Methods to parse, create, read from and write to the following files:
+- account_details.txt
+- download_date.txt
+- funny_birthday_wish_path.txt
+- serious_birthday_wish_path.txt
+- config.ini
+- birthdays.ics
+"""
 
 
 def read_account_details() -> List[str]:
@@ -49,6 +74,60 @@ def parse_ics() -> Calendar:
         return Calendar(g.read().decode())
 
 
+def download_birthday_calendar() -> None:
+    """ Gets a birthday calendar from Facebook and saves it as an ics file.
+    Facebook calendar can be downloaded only once a day. The date of the last
+    download is saved in download_date.txt
+    """
+    # check if the download_date.txt file exists
+    # if not, return an exception
+    if not download_date_file_exists():
+        raise exceptions.DownloadDateFileNotFoundException
+    # check the last download date
+    # if it is not written in download_date.txt or is not the same date as
+    # today's, download the FB birthdays calendar
+    # Otherwise, skip downloading
+    with open(config.download_date, 'r+') as f:
+        download_date = f.read()
+        today = datetime.today().strftime('%Y-%m-%d')
+        if not download_date or download_date != today:
+            fb2cal.main2()
+            f.seek(0)
+            f.write(today)
+            f.truncate()
+            print("FB birthdays calendar is downloaded")
+        else:
+            print("FB birthdays calendar cannot be downloaded twice a day")
+
+
+def read_wishes(wish_type) -> List[str]:
+    """"Reads in birthday wishes. If wish_type is 'funny', funny birthday
+    wishes are read in, otherwise, serious birthday wishes are read in."""
+    if wish_type == 'funny':
+        f = open(config.funny_birthday_wish_path, "r")
+    else:
+        f = open(config.serious_birthday_wish_path, "r")
+    wishes = f.read().splitlines()
+    f.close()
+    return wishes
+
+
+"""
+Helper methods for filtering.
+"""
+
+
+def select_random_wish(wish_type) -> str:
+    """Returns a random birthday wish."""
+    wishes = read_wishes(wish_type)
+    return random.choice(wishes)
+
+
+"""
+Helper methods for creating and returning class instances.
+"""
+
+
 def set_up_fbuser() -> FBUser:
     """ (1) Read username and password from account_details
         (2) Copy account details to fb2cal config.ini
@@ -72,27 +151,9 @@ def set_up_fbuser() -> FBUser:
     # if not, run fb2cal to create an ics file and download birthdays from FB
     # into the ics file
     if not ics_file_exists():
-        fb2cal.main2()
+        download_birthday_calendar()
     # parse a Calendar from the ics file
     cal = parse_ics()
     # create and return a new instance of FBUser
     user = FBUser(account_details[0], account_details[1], cal)
     return user
-
-
-def read_wishes(wish_type) -> List[str]:
-    """"Reads in birthday wishes. If wish_type is 'funny', funny birthday
-    wishes are read in, otherwise, serious birthday wishes are read in."""
-    if wish_type == 'funny':
-        f = open(config.funny_birthday_wish_path, "r")
-    else:
-        f = open(config.serious_birthday_wish_path, "r")
-    wishes = f.read().splitlines()
-    f.close()
-    return wishes
-
-
-def select_random_wish(wish_type) -> str:
-    """Returns a random birthday wish."""
-    wishes = read_wishes(wish_type)
-    return random.choice(wishes)

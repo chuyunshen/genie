@@ -94,7 +94,7 @@ class FBUser:
         previously saved birthday message under attribute description removed
         (set to None).
         """
-        download_birthday_calendar()
+        tools.download_birthday_calendar()
         new_cal = tools.parse_ics()
         all_old_uids = [event.uid for event in self.birthday_calendar.events]
         all_new_uids = [event.uid for event in new_cal.events]
@@ -191,21 +191,3 @@ def get_birthday_by_uid(uid, birthday_calendar) -> Arrow:
     for event in birthday_calendar.events:
         if event.uid == uid:
             return event.begin
-
-
-def download_birthday_calendar() -> None:
-    """ Gets a birthday calendar from Facebook and saves it
-    """
-    if not path.exists(config.download_date):
-        raise exceptions.DownloadDateFileNotFoundException
-    with open(config.download_date, 'r+') as f:
-        download_date = f.read()
-        today = datetime.today().strftime('%Y-%m-%d')
-        if not download_date or download_date != today:
-            fb2cal.main2()
-            f.seek(0)
-            f.write(today)
-            f.truncate()
-            print("FB birthdays calendar is downloaded")
-        else:
-            print("FB birthdays calendar cannot be downloaded twice a day")
