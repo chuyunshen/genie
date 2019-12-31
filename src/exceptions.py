@@ -4,3 +4,7 @@ class AccountDetailsNotFoundException(Exception):
 
 class FB2CalConfigNotFoundException(Exception):
     pass
+
+
+class DownloadDateFileNotFoundException(Exception):
+    pass
