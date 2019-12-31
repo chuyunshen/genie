@@ -8,6 +8,7 @@ from ics import Calendar
 from fb2cal.src import fb2cal
 import random
 
+
 def account_details_file_exists() -> bool:
     """Check if account details file exists"""
     return path.exists(config.account_details_path)
@@ -63,7 +64,8 @@ def set_up_fbuser() -> FBUser:
     # check if fb2cal config.ini exists
     # if exists, set fb_email and fb_pass
     if fb2cal_config_exists():
-        set_fb2cal_config_fb_email_fb_pass(account_details[0], account_details[1])
+        set_fb2cal_config_fb_email_fb_pass(account_details[0],
+                                           account_details[1])
     else:
         raise exceptions.FB2CalConfigNotFoundException
     # check if ics file exists
