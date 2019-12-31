@@ -179,12 +179,10 @@ class FBUser:
         except exceptions.FriendNotFoundException:
             print(f"UID {uid} is not in your friends list.")
             return
-
+        # create a birthday event
+        new_birthday_event = create_birthday_event(uid, name, birthday_date)
         # add a new event to the birthdays calendar
-        self.birthday_calendar = add_event_to_calendar(self.birthday_calendar,
-                                                       uid,
-                                                       name,
-                                                       birthday_date)
+        self.birthday_calendar.events.add(new_birthday_event)
 
     def delete_birthday_by_uid(self, uid) -> None:
         """Delete a birthday event by uid."""
@@ -231,15 +229,13 @@ def get_birthday_by_uid(uid, birthday_calendar) -> Arrow:
             return event.begin
 
 
-def add_event_to_calendar(cal: Calendar, uid: int,
-                          name: str, birthday_date: datetime) -> Calendar:
+def create_birthday_event(uid: int, name: str, birthday_date: datetime) -> Event:
     """
-    Method to add a new birthday event to the calendar.
-    :param cal:             Calendar to be updated
+    Create a birthday event with the provided parameters.
     :param uid:             Friend's FB UID
     :param name:            Friend's FB name
     :param birthday_date:   Friend's birthday date
-    :return:                Calendar
+    :return:                Birthday event
     """
     # Initialize birthday_event to a new event
     birthday_event = Event()
@@ -258,5 +254,4 @@ def add_event_to_calendar(cal: Calendar, uid: int,
     birthday_event.duration = timedelta(days=1)
     birthday_event.extra.append(
         ContentLine(name='RRULE', value='FREQ=YEARLY'))
-    cal.events.add(birthday_event)
-    return cal
+    return birthday_event
