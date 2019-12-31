@@ -118,35 +118,54 @@ class FBUser:
                 if event.uid not in self.get_friend_dict():
                     self.birthday_calendar.events.remove(event)
 
-    def set_birthday_by_uid(self, uid, birthday) -> None:
-        """Set the birthday for a friend by uid.
-        Args:
-            uid: str
-            birthday: datetime
-        """
-        # If the uid exists in the current birthday_calendar, we will delete
-        # the old event.
-        self.delete_birthday_by_uid(uid)
-        # Initialize birthday_event to a new event
-        birthday_event = Event()
-        birthday_event.uid = uid
-        birthday_event.name = "{}'s Birthday".format(
-            self.get_friend_dict()[uid][0])
+    # TODO Remove this method
+    # def set_birthday_by_uid(self, uid, birthday) -> None:
+    #     """Set the birthday for a friend by uid.
+    #     Args:
+    #         uid: str
+    #         birthday: datetime
+    #     """
+    #     # If the uid exists in the current birthday_calendar, we will delete
+    #     # the old event.
+    #     self.delete_birthday_by_uid(uid)
+    #     # Initialize birthday_event to a new event
+    #     birthday_event = Event()
+    #     birthday_event.uid = uid
+    #     birthday_event.name = "{}'s Birthday".format(
+    #         self.get_friend_dict()[uid][0])
+    #
+    #     today = datetime.today()
+    #     # Calculate the year as this year or next year based on if its past
+    #     # current month or not
+    #     year = today.year if birthday.month >= today.month else (
+    #             today + relativedelta(years=1)).year
+    #     # Pad day, month with leading zeros to 2dp
+    #     month = '{:02d}'.format(birthday.month)
+    #     day = '{:02d}'.format(birthday.day)
+    #     birthday_event.begin = f'{year}-{month}-{day} 00:00:00'
+    #     birthday_event.make_all_day()
+    #     birthday_event.duration = timedelta(days=1)
+    #     birthday_event.extra.append(
+    #         ContentLine(name='RRULE', value='FREQ=YEARLY'))
+    #     self.birthday_calendar.events.add(birthday_event)
 
-        today = datetime.today()
-        # Calculate the year as this year or next year based on if its past
-        # current month or not
-        year = today.year if birthday.month >= today.month else (
-                today + relativedelta(years=1)).year
-        # Pad day, month with leading zeros to 2dp
-        month = '{:02d}'.format(birthday.month)
-        day = '{:02d}'.format(birthday.day)
-        birthday_event.begin = f'{year}-{month}-{day} 00:00:00'
-        birthday_event.make_all_day()
-        birthday_event.duration = timedelta(days=1)
-        birthday_event.extra.append(
-            ContentLine(name='RRULE', value='FREQ=YEARLY'))
-        self.birthday_calendar.events.add(birthday_event)
+    def add_friend_birthday(self, uid: int, birthday_date: datetime) -> None:
+        """
+        Add a new friend and her/his birthday to the birthday calendar.
+        :param uid:             Friend's FB UID
+        :param birthday_date:   Friend's birthday date
+        :return:                None
+        """
+        # find the friend's name per UID
+        # if the UID is not in the FB friends list, raise an exception
+        name = self.get_friend_dict()[uid][0]
+        if not name:
+            raise exceptions.FriendNotFoundException
+        # add a new event to the birthdays calendar
+        self.birthday_calendar = add_event_to_calendar(self.birthday_calendar,
+                                                       uid,
+                                                       name,
+                                                       birthday_date)
 
     def delete_birthday_by_uid(self, uid) -> None:
         """Delete a birthday event by uid."""
@@ -191,3 +210,34 @@ def get_birthday_by_uid(uid, birthday_calendar) -> Arrow:
     for event in birthday_calendar.events:
         if event.uid == uid:
             return event.begin
+
+
+def add_event_to_calendar(cal: Calendar, uid: int,
+                          name: str, birthday_date: datetime) -> Calendar:
+    """
+    Method to add a new birthday event to the calendar.
+    :param cal:             Calendar to be updated
+    :param uid:             Friend's FB UID
+    :param name:            Friend's FB name
+    :param birthday_date:   Friend's birthday date
+    :return:                Calendar
+    """
+    # Initialize birthday_event to a new event
+    birthday_event = Event()
+    birthday_event.uid = uid
+    birthday_event.name = "{}'s Birthday".format(name)
+    today = datetime.today()
+    # Calculate the year as this year or next year based on if its past
+    # current month or not
+    year = today.year if birthday_date.month >= today.month else (
+            today + relativedelta(years=1)).year
+    # Pad day, month with leading zeros to 2dp
+    month = '{:02d}'.format(birthday_date.month)
+    day = '{:02d}'.format(birthday_date.day)
+    birthday_event.begin = f'{year}-{month}-{day} 00:00:00'
+    birthday_event.make_all_day()
+    birthday_event.duration = timedelta(days=1)
+    birthday_event.extra.append(
+        ContentLine(name='RRULE', value='FREQ=YEARLY'))
+    cal.events.add(birthday_event)
+    return cal

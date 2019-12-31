@@ -6,6 +6,7 @@ from fb_user import get_birthday_by_uid
 import arrow
 
 
+
 @pytest.fixture(scope="module")
 def setup():
     user = tools.set_up_fbuser()
@@ -41,13 +42,13 @@ def test_get_uid_by_name(setup):
         user.get_uid_by_name('test_name')
 
 
-def test_set_birthday_by_uid(setup):
+def test_add_friend_birthday(setup):
     # Arrange
     user, name, message = setup
     birthday = datetime.date(2020, 1, 1)
 
     # Act
-    user.set_birthday_by_uid('1104705831', birthday)
+    user.add_friend_birthday('1104705831', birthday)
 
     # Assert
     assert arrow.get(birthday) == get_birthday_by_uid('1104705831',
