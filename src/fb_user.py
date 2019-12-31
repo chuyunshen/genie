@@ -41,16 +41,6 @@ class FBUser:
     def get_client(self) -> Client:
         return self.client
 
-    def get_uid_by_name(self, name) -> List[str]:
-        """ Finds a Facebook friend's uid by name. If the name does not exist
-        in the friend list, NameError is raised. Returns a list of uids.
-        """
-        friends = self.get_friend_dict()
-        uids = filter(lambda friend: name == friend[0], friends.values())
-        if uids:
-            return list(uids)
-        raise NameError
-
     def get_name_by_uid(self, uid: int) -> str:
         """
         Find a FB friend with the provided uid and return her/his name
@@ -252,3 +242,50 @@ def create_birthday_event(uid: int, name: str, birthday_date: datetime) -> Event
     birthday_event.extra.append(
         ContentLine(name='RRULE', value='FREQ=YEARLY'))
     return birthday_event
+
+
+def get_uid_by_name(name, friends) -> List[str]:
+    """ Finds a Facebook friend's uid by name from a friend dictionary.
+    If the name does not exist in the friend list, NameError is raised.
+    Returns a list of uids.
+    """
+    uids = filter(lambda friend: name == friend[0], friends.values())
+    if uids:
+        return list(uids)
+    raise NameError
+
+
+"""
+Helper methods for creating and returning class instances.
+"""
+
+
+def set_up_fbuser() -> FBUser:
+    """ (1) Read username and password from account_details
+        (2) Copy account details to fb2cal config.ini
+        (3) Parse a birthdays calendar from the ics file
+        (4) Create and return an FB User
+    """
+    # check if account_details file exist
+    # if exists, read account_details
+    if tools.account_details_file_exists():
+        account_details = tools.read_account_details()
+    else:
+        raise exceptions.AccountDetailsNotFoundException
+    # check if fb2cal config.ini exists
+    # if exists, set fb_email and fb_pass
+    if tools.fb2cal_config_exists():
+        tools.set_fb2cal_config_fb_email_fb_pass(account_details[0],
+                                                 account_details[1])
+    else:
+        raise exceptions.FB2CalConfigNotFoundException
+    # check if ics file exists
+    # if not, run fb2cal to create an ics file and download birthdays from FB
+    # into the ics file
+    if not tools.ics_file_exists():
+        tools.download_birthday_calendar()
+    # parse a Calendar from the ics file
+    cal = tools.parse_ics()
+    # create and return a new instance of FBUser
+    user = FBUser(account_details[0], account_details[1], cal)
+    return user
