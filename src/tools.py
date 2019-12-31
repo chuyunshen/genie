@@ -123,37 +123,3 @@ def select_random_wish(wish_type) -> str:
     return random.choice(wishes)
 
 
-"""
-Helper methods for creating and returning class instances.
-"""
-
-
-def set_up_fbuser() -> FBUser:
-    """ (1) Read username and password from account_details
-        (2) Copy account details to fb2cal config.ini
-        (3) Parse a birthdays calendar from the ics file
-        (4) Create and return an FB User
-    """
-    # check if account_details file exist
-    # if exists, read account_details
-    if account_details_file_exists():
-        account_details = read_account_details()
-    else:
-        raise exceptions.AccountDetailsNotFoundException
-    # check if fb2cal config.ini exists
-    # if exists, set fb_email and fb_pass
-    if fb2cal_config_exists():
-        set_fb2cal_config_fb_email_fb_pass(account_details[0],
-                                           account_details[1])
-    else:
-        raise exceptions.FB2CalConfigNotFoundException
-    # check if ics file exists
-    # if not, run fb2cal to create an ics file and download birthdays from FB
-    # into the ics file
-    if not ics_file_exists():
-        download_birthday_calendar()
-    # parse a Calendar from the ics file
-    cal = parse_ics()
-    # create and return a new instance of FBUser
-    user = FBUser(account_details[0], account_details[1], cal)
-    return user

@@ -2,14 +2,14 @@ import os
 import pytest
 import datetime
 import tools
-from fb_user import get_birthday_by_uid
+from fb_user import get_birthday_by_uid, set_up_fbuser
 import arrow
 
 
 
 @pytest.fixture(scope="module")
 def setup():
-    user = tools.set_up_fbuser()
+    user = set_up_fbuser()
     name = "Natalia Moran"
     message = "happy bday"
     return user, name, message
