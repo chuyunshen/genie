@@ -9,6 +9,25 @@
 <p align="center">
 Why remember birthdays when Genie can grant wishes to all your Facebook friends?  <br>
   </p>
+  
+Genie logs users in onto Facebook and fetches birthday information. Users can
+draft or select random birthday wish messages that will be automatically sent on
+friends' birthdays.
+
+Genie is built on [Python](https://www.tensorflow.org/api_docs/python).
+
+For our next steps, we would like to integrate holidays, be cross-platform, and 
+move Genie online.
+
+## Table of contents
+
+- [Quick Start](#quick-start)
+- [Demonstration](#demonstration)
+- [What's included](#whats-included)
+- [Documentation](#documentation)
+- [Creators](#creators)
+- [Thanks](#thanks)
+- [Copyright and license](#copyright-and-license)
 
 ## Quick start
 
@@ -34,6 +53,11 @@ This file should have two lines: Facebook username and Facebook password.
 
 * Create a file `download_date.txt` under `config` directory. 
 Leave this file empty.
+
+## Demonstration
+Add gifs here!
+
+## Documentation
 
 ## What's included
 ```
@@ -67,3 +91,6 @@ genie
     │   └── test_fbuser.py
     └── tools.py
 ```
+## Creators
+## Thanks
+## Copyright and License
