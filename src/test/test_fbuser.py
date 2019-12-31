@@ -24,8 +24,8 @@ def test_send_messages(setup):
 
     # Act
     user.schedule_birthday_message_for_uid(uid, message)
+    # user.send_all_scheduled_birthday_messages(today)
     user.save_calendar()
-    user.send_all_scheduled_birthday_messages(today)
 
     # Assert
     assert birthday.date() == today
