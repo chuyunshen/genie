@@ -36,7 +36,7 @@ class FBUser:
         self._password = password
         self.birthday_calendar = cal
         self.client = _login(self)
-        print("{} is logged in".format(self.client.uid))
+        print(f"{self.client.uid} is logged in")
 
     def get_client(self) -> Client:
         return self.client
@@ -228,7 +228,7 @@ def add_event_to_calendar(cal: Calendar, uid: int,
     # Initialize birthday_event to a new event
     birthday_event = Event()
     birthday_event.uid = uid
-    birthday_event.name = "{}'s Birthday".format(name)
+    birthday_event.name = f"{name}'s Birthday"
     today = datetime.today()
     # Calculate the year as this year or next year based on if its past
     # current month or not
