@@ -41,14 +41,17 @@ class FBUser:
     def get_client(self) -> Client:
         return self.client
 
-    def get_uid_by_name(self, name) -> str:
+    def get_uid_by_name(self, name) -> List[str]:
         """ Finds a Facebook friend's uid by name. If the name does not exist
-        in the friend list, NameError is raised.
+        in the friend list, NameError is raised. Returns a list of uids.
         """
+        uids = []
         friends = self.get_friend_dict()
         for uid in friends:
             if name == friends[uid][0]:
-                return uid
+                uids.append(uid)
+        if uids:
+            return uids
         raise NameError
 
     def get_friend_dict(self) -> Dict:

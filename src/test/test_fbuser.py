@@ -19,7 +19,7 @@ def test_send_messages(setup):
     # Arrange
     user, name, message = setup
     print(user.get_friend_dict())
-    uid = user.get_uid_by_name(name)
+    uid = user.get_uid_by_name(name)[0]
     birthday = get_birthday_by_uid(uid, user.birthday_calendar)
     today = datetime.date(2020, 1, 21)
 
@@ -37,7 +37,7 @@ def test_get_uid_by_name(setup):
     user, name, message = setup
 
     # Assert
-    assert '1104705831' == user.get_uid_by_name(name)
+    assert '1104705831' == user.get_uid_by_name(name)[0]
     with pytest.raises(Exception) as e_info:
         user.get_uid_by_name('test_name')
 
