@@ -14,3 +14,4 @@ oauth2client
 selenium==3.141.0
 pyyaml
 pytest
+PyInquirer
