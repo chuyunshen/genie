@@ -76,8 +76,8 @@ class FBUser:
         to the next year's birthday."""
         self.send_message(event.uid, event.description)
         event.begin = event.begin.shift(years=1)
-        print("Message to {} has been sent.".format(event.uid))
-        print("Birthday date is updated to {}.".format(event.begin))
+        print(f"Message to {event.uid} has been sent.")
+        print(f"Birthday date is updated to {event.begin}.")
 
     def send_all_scheduled_birthday_messages(self, today) -> None:
         """Checks and sends all scheduled birthday messages."""

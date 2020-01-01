@@ -103,12 +103,10 @@ def download_birthday_calendar() -> None:
 def _read_wishes(wish_type) -> List[str]:
     """"Reads in birthday wishes. If wish_type is 'funny', funny birthday
     wishes are read in, otherwise, serious birthday wishes are read in."""
-    if wish_type == 'funny':
-        f = open(config.funny_birthday_wish_path, "r")
-    else:
-        f = open(config.serious_birthday_wish_path, "r")
-    wishes = f.read().splitlines()
-    f.close()
+    filename = config.funny_birthday_wish_path if wish_type == 'funny' else \
+        config.serious_birthday_wish_path
+    with open(filename, "r") as f:
+        wishes = f.read().splitlines()
     return wishes
 
 

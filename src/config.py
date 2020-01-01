@@ -1,5 +1,5 @@
 calendar_dir = './config/birthdays.ics'
-config_dir = './fb2cal/config/config.ini'
+config_dir = './fb2cal/config/config.ini'  # config file for fb2cal
 ics_file_path = calendar_dir
 account_details_path = './config/account_details.txt'
 download_date = './config/download_date.txt'
