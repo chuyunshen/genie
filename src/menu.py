@@ -1,12 +1,20 @@
 from PyInquirer import style_from_dict, Token, prompt
 from PyInquirer import Validator, ValidationError
 import datetime
-# from fb_user import get_uid_by_name
+from prompt_toolkit.document import Document
 from fb_user import *
 
 
 class DateValidator(Validator):
-    def validate(self, document):
+    """DateValidator inherits from Validator and is used for validating dates.
+    """
+
+    def validate(self, document: Document) -> None:
+        """Validates dates.
+        :param document: Document to validate
+        :returns: None
+        :raises ValidationError: If document.text is not a valid date
+        """
         try:
             datetime.datetime.strptime(document.text, '%m-%d')
         except ValueError:
@@ -16,16 +24,33 @@ class DateValidator(Validator):
 
 
 class StringValidator(Validator):
-    def validate(self, document):
+    """StringValidator inherits from Validator and is used for validating
+    strings.
+    """
+
+    def validate(self, document) -> None:
+        """Validate strings.
+        :param document: Document to validate
+        :returns: None
+        :raises ValidationError: If document.text is an empty string
+        """
         if not document.text or document.text.strip() == '':
             raise ValidationError(
                 message="Please enter a non-empty input.",
                 cursor_position=len(document.text))  # Move cursor to end
 
 
-def validate_name(name, friend_list):
+def validate_name(name, friends: dict) -> None:
+    """Validate names.
+    :param name:             Name to validate
+    :param friends:          A dictionary of friends mapping from uid to name,
+                             url, and photo url.
+    :returns:                None
+    :raises ValidationError: If name does not exist in friends or is an empty
+    string
+    """
     try:
-        get_uid_by_name(name, friend_list)
+        get_uid_by_name(name, friends)
     except NameError:
         raise ValidationError(
             message="You don't have a friend with this name",
@@ -37,6 +62,10 @@ def validate_name(name, friend_list):
 
 
 class Menu:
+    """
+    This class contains attributes and methods related to displaying a menu
+    for the command line interface.
+    """
     main_menu_question = [
         {
             'type': 'list',
@@ -90,10 +119,15 @@ class Menu:
         Token.Question: '',
     })
 
-    def __init__(self, friend_list):
+    def __init__(self, friends: dict) -> None:
+        """Initialize a menu.
+        :param friends:     A dictionary of friends mapping from uid to name,
+                            url, and photo url.
+        """
+
         print("Welcome to Genie--your one-stop program for automated birthday"
               "wishes.")
-        self.friend_list = friend_list
+        self.friends = friends
         self.friend_selection_question = [
             {
                 'type': 'list',
@@ -101,7 +135,7 @@ class Menu:
                 'message': 'There are multiple friends with the same name. '
                            'Their Facebook profile pictures are included in '
                            'the links.',
-                'choices': self.friend_list
+                'choices': self.friends  # might not work, need an array
             }]
 
         self.friend_name_question = [
@@ -110,32 +144,54 @@ class Menu:
                 'name': 'friend_name',
                 'message': "Please enter your friend's first and last name "
                            "(e.g., Jane Doe)",
-                'validate': lambda text: validate_name(text, self.friend_list)
+                'validate': lambda text: validate_name(text, self.friends)
             }]
 
-    def update_friend_list(self, friend_list):
-        self.friend_list = friend_list
+    def update_friends(self, friends: dict) -> None:
+        """Update friends.
+        :param friends:     A dictionary of friends mapping from uid to name,
+                            url, and photo url.
+        :return:            None
+        """
+        self.friends = friends
 
-    def get_main_menu_choice(self):
+    def get_main_menu_choice(self) -> str:
+        """
+        Print main menu choices and get user's response.
+        :return:    User's main menu choice
+        """
         answer = prompt(self.main_menu_question, style=self.style)['main_menu']
         if answer == self.main_menu_question[0]['choices'][0]:
             return "edit"
         else:
             return "schedule"
 
-    def get_friend_name(self):
+    def get_friend_name(self) -> str:
+        """Print the friend name question and get user's response.
+        :return:    User's friend name
+        """
         return prompt(self.friend_name_question,
                       style=self.style)['friend_name']
 
-    def get_friend_selection(self):
+    def get_friend_selection(self) -> str:
+        """Print a list of friend with the same name to select from and get
+        user's response.
+        :return:    User's friend name
+        """
         return prompt(self.friend_selection_question,
                       style=self.style)['friend_selection']
 
-    def get_friend_birthday(self):
+    def get_friend_birthday(self) -> str:
+        """Print the friend birthday question and get user's response.
+        :return:    User's friend birthday
+        """
         return prompt(self.friend_birthday_question,
                       style=self.style)['friend_birthday']
 
-    def get_birthday_message_type(self):
+    def get_birthday_message_type(self) -> str:
+        """Print the birthday message type question and get user's response.
+        :return:    User's preferred birthday message type
+        """
         answer = prompt(self.birthday_message_type_question,
                         style=self.style)['birthday_message_type']
         if answer == self.birthday_message_type_question[0]['choices'][0]:
@@ -143,10 +199,17 @@ class Menu:
         else:
             return "drafted"
 
-    def get_random_birthday_message_type(self):
+    def get_random_birthday_message_type(self) -> str:
+        """Print the random birthday message type question and get user's
+        response.
+        :return:    User's preferred random birthday message type
+        """
         return prompt(self.random_birthday_message_type_question,
                       style=self.style)['random_birthday_message_type']
 
-    def get_drafted_birthday_message(self):
+    def get_drafted_birthday_message(self) -> str:
+        """Print the drafted birthday message question and get user's response.
+        :return:    User's drafted birthday message
+        """
         return prompt(self.draft_birthday_message_question,
                       style=self.style)['drafted_birthday_message']
