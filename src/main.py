@@ -7,7 +7,12 @@ This file is the entry point for the program
 """
 
 
-def main():
+def main() -> None:
+    """Set up Facebook user, update birthday calendar, and send scheduled
+    birthday messages.
+    Then present menu to user and interacts with user.
+    :return: None
+    """
     fb_user = set_up_fbuser()
     today = datetime.today()
     # Upon login, automatically update birthday calendar and send scheduled
