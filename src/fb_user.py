@@ -26,11 +26,13 @@ class FBUser:
     def __init__(self, username: str, password: str, cal: Calendar) -> None:
         """ Initialize a new Facebook user with the username and
         password stored in the account_details file.
-
-        birthday_calendar: has attributes events (a set of ics.Event). Important
-        attributes of an Event include name, uid (facebook user id),
-        begin (birthday, arrow format), and description (contains birthday
-        message, str).
+        :param username: Facebook username
+        :param password: Facebook password
+        :param cal:      Has attributes events (a set of ics.Event). Important
+                         attributes of an Event include name, uid (facebook
+                         user id), begin (birthday, arrow format), and
+                         description (contains birthday message, str).
+        :return          None
         """
         self._username = username
         self._password = password
@@ -39,9 +41,12 @@ class FBUser:
         print(f"{self.client.uid} is logged in")
 
     def get_client(self) -> Client:
+        """Return client object.
+        :return Client object from the fbchat module
+        """
         return self.client
 
-    def get_name_by_uid(self, uid: int) -> str:
+    def get_name_by_uid(self, uid: str) -> str:
         """
         Find a FB friend with the provided uid and return her/his name
         If the uid is not found in the FB friends list, raise an exception
@@ -56,6 +61,7 @@ class FBUser:
 
     def get_friend_dict(self) -> Dict:
         """ Gets a dictionary of friends mapping from their uid to their name.
+        :return:    A dictionary mapping from uid to name, url, and photo url
         """
         friend_dict = {}
         user_list = [user for user in self.client.fetchAllUsers() if
@@ -65,22 +71,32 @@ class FBUser:
             friend_dict[user.uid] = [user.name, user.url, user.photo]
         return friend_dict
 
-    def send_message(self, uid, message) -> None:
-        """ Send a message"""
+    def send_message(self, uid: str, message: str) -> None:
+        """ Send a message.
+        :param uid:     Message receiver's uid
+        :param message: Message to send
+        :return:        None
+        """
         self.client.send(Message(text=message),
                          thread_id=uid,
                          thread_type=ThreadType.USER)
 
-    def send_scheduled_message(self, event) -> None:
+    def send_scheduled_message(self, event: Event) -> None:
         """ Send a scheduled birthday message and update the birthday's date
-        to the next year's birthday."""
+        to the next year's birthday.
+        :param event:   Birthday event that contains information regarding uid
+                        birthday, and message.
+        :return:        None
+        """
         self.send_message(event.uid, event.description)
         event.begin = event.begin.shift(years=1)
         print(f"Message to {event.uid} has been sent.")
         print(f"Birthday date is updated to {event.begin}.")
 
-    def send_all_scheduled_birthday_messages(self, today) -> None:
-        """Checks and sends all scheduled birthday messages."""
+    def send_all_scheduled_birthday_messages(self, today: datetime) -> None:
+        """Checks and sends all scheduled birthday messages.
+        :param today:   today's date
+        """
         for event in self.birthday_calendar.events:
             if event.description and today == event.begin.date():
                 self.send_scheduled_message(event)
@@ -96,6 +112,7 @@ class FBUser:
         attribute is updated to a new year's date (e.g., 2020-08-29), with the
         previously saved birthday message under attribute description removed
         (set to None).
+        :return:    None
         """
         tools.download_birthday_calendar()
         new_cal = tools.parse_ics()
@@ -152,7 +169,7 @@ class FBUser:
     #         ContentLine(name='RRULE', value='FREQ=YEARLY'))
     #     self.birthday_calendar.events.add(birthday_event)
 
-    def add_friend_birthday(self, uid: int, birthday_date: datetime) -> None:
+    def add_friend_birthday(self, uid: str, birthday_date: datetime) -> None:
         """
         Add a new friend and her/his birthday to the birthday calendar.
         :param uid:             Friend's FB UID
@@ -171,7 +188,7 @@ class FBUser:
         # add a new event to the birthdays calendar
         self.birthday_calendar.events.add(new_birthday_event)
 
-    def delete_birthday_by_uid(self, uid) -> None:
+    def delete_birthday_by_uid(self, uid: str) -> None:
         """Delete a birthday event by uid."""
         uid_exists = False
         for event in self.birthday_calendar.events:
@@ -187,7 +204,7 @@ class FBUser:
         with open(config.calendar_dir, 'w') as f:
             f.writelines(self.birthday_calendar)
 
-    def schedule_birthday_message_for_uid(self, uid, message) -> None:
+    def schedule_birthday_message_for_uid(self, uid: str, message: str) -> None:
         """Schedules a birthday message for Facebook friend with the given uid.
         """
         for event in self.birthday_calendar.events:
@@ -208,17 +225,21 @@ def _login(self) -> Client:
     return Client(self._username, self._password)
 
 
-def get_birthday_by_uid(uid, birthday_calendar) -> Arrow:
-    """ Returns the birthday of a specific uid, as an arrow object
+def get_birthday_by_uid(uid: str, birthday_calendar: Calendar) -> Arrow:
+    """ Return the birthday of a specific uid, as an arrow object
+    :param uid:                   uid to get birthday for
+    :param birthday_calendar:     birthday calendar within which to search for
+                                  uid
+    :return                       Arrow object representing the birthday
     """
     for event in birthday_calendar.events:
         if event.uid == uid:
             return event.begin
 
 
-def create_birthday_event(uid: int, name: str, birthday_date: datetime) -> Event:
-    """
-    Create a birthday event with the provided parameters.
+def create_birthday_event(uid: int, name: str,
+                          birthday_date: datetime) -> Event:
+    """ Create a birthday event with the provided parameters.
     :param uid:             Friend's FB UID
     :param name:            Friend's FB name
     :param birthday_date:   Friend's birthday date
@@ -244,10 +265,13 @@ def create_birthday_event(uid: int, name: str, birthday_date: datetime) -> Event
     return birthday_event
 
 
-def get_uid_by_name(name, friends) -> List[str]:
+def get_uid_by_name(name: str, friends: dict) -> List[str]:
     """ Finds a Facebook friend's uid by name from a friend dictionary.
     If the name does not exist in the friend list, NameError is raised.
     Returns a list of uids.
+    :param name:       Name to find uid for
+    :param friends:    A dictionary mapping from uid to name, url, and photo url
+    :return:           A list of uids
     """
     uids = filter(lambda friend: name == friend[0], friends.values())
     if uids:
@@ -255,16 +279,13 @@ def get_uid_by_name(name, friends) -> List[str]:
     raise NameError
 
 
-"""
-Helper methods for creating and returning class instances.
-"""
-
-
 def set_up_fbuser() -> FBUser:
-    """ (1) Read username and password from account_details
+    """Helper method for creating and returning class instances.
+        (1) Read username and password from account_details
         (2) Copy account details to fb2cal config.ini
         (3) Parse a birthdays calendar from the ics file
         (4) Create and return an FB User
+        :return: FBUser
     """
     # check if account_details file exist
     # if exists, read account_details
