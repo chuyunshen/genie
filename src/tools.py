@@ -1,7 +1,6 @@
 from typing import List
 from os import path
 from settings import *
-from fb_user import FBUser
 import exceptions
 import configparser
 from ics import Calendar

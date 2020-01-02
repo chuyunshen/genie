@@ -12,6 +12,7 @@ import tools
 from os import path
 import exceptions
 import pickle
+from custom_client import CustomClient
 
 
 class FBUser:
@@ -211,6 +212,7 @@ class FBUser:
         for event in self.birthday_calendar.events:
             if event.uid == uid:
                 event.description = message
+                print("Message scheduled!")
                 return
         raise NameError
 
@@ -319,25 +321,22 @@ def set_up_fbuser() -> FBUser:
     cal = tools.parse_ics()
     # create and return a new instance of FBUser
     user = FBUser(account_details[0], account_details[1], cal)
+    # update birthday calendar
+    user.update_birthday_calendar()
     return user
 
 
-class CustomClient(Client):
-    """CustomClient inherits from Client, to add on a method to get a list
-    of Facebook/Messenger friends."""
-
-    def get_contact_list(self):
-        """Returns all contacts (friends or non-friends) of the client.
-        Returns:
-            list: :class:`User` objects
-        Raises:
-            FBchatException: If request failed
-        """
-        data = {"viewer": self._uid}
-        j = self._payload_post("/chat/user_info_all", data)
-
-        users = []
-        for data in j.values():
-            if data["type"] in ["user", "friend"]:
-                users.append(User._from_all_fetch(data))
-        return users
+def save_cal_and_logout(fb_user: FBUser):
+    """
+    (1) Send birthday messages scheduled for today
+    (2) Save calendar to the .ics file
+    (3) Logout from fbchat
+    """
+    today = datetime.today()
+    # Send scheduled birthday messages
+    fb_user.send_all_scheduled_birthday_messages(today)
+    # Save calendar to the .ics file
+    fb_user.save_calendar()
+    # Logout from fbchat
+    fb_user.logout()
+    print("Logged out")

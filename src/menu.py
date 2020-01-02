@@ -181,6 +181,26 @@ class Menu:
         return prompt(self.friend_selection_question,
                       style=self.style)['friend_selection']
 
+    def get_friend_uid(self, fb_user: FBUser) -> str:
+        """
+        Get an FB friend's name from the user input,
+        search for this friend's UID among user's FB friends
+        and, if found, return her/his uid.
+        Otherwise, print out "Friend not found".
+        :param fb_user:     FB user to provide a friend's name
+        :return:            FB frind's UID
+        """
+        try:
+            friend_name = self.get_friend_name()
+            friend_uids = get_uid_by_name(friend_name,
+                                          fb_user.get_friend_dict())
+            if len(friend_uids) > 1:
+                return self.get_friend_selection()
+            else:
+                return friend_uids[0]
+        except NameError:
+            print(f"Friend not found.")
+
     def get_friend_birthday(self) -> str:
         """Print the friend birthday question and get user's response.
         :return:    User's friend birthday
@@ -213,3 +233,17 @@ class Menu:
         """
         return prompt(self.draft_birthday_message_question,
                       style=self.style)['drafted_birthday_message']
+
+    def get_birthday_message(self) -> str:
+        """
+        Get a user's drafted message or a random template message,
+        depending on the user's input choice.
+        :return:    birthday message - drafted or random template
+        """
+        birthday_message_type = self.get_birthday_message_type()
+        if birthday_message_type == 'random':
+            random_birthday_message_type = \
+                self.get_random_birthday_message_type()
+            return tools.select_random_wish(random_birthday_message_type)
+        else:
+            return self.get_drafted_birthday_message()
