@@ -222,7 +222,7 @@ class FBUser:
 def _login(self) -> Client:
     """ Helper method to login to a Facebook account using a username and
     password from account_details"""
-    return Client(self._username, self._password)
+    return Client(self._username, self._password, max_tries=1)
 
 
 def get_birthday_by_uid(uid: str, birthday_calendar: Calendar) -> Arrow:
