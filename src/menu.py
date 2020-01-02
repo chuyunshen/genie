@@ -72,7 +72,8 @@ class Menu:
             'name': 'main_menu',
             'message': 'What would you like to do?',
             'choices': ["Edit a friend's birthday",
-                        "Schedule/Update a Facebook birthday message"],
+                        "Schedule/Update a Facebook birthday message",
+                        "Exit"],
         }]
 
     friend_birthday_question = [
@@ -162,8 +163,10 @@ class Menu:
         answer = prompt(self.main_menu_question, style=self.style)['main_menu']
         if answer == self.main_menu_question[0]['choices'][0]:
             return "edit"
-        else:
+        elif answer == self.main_menu_question[0]['choices'][1]:
             return "schedule"
+        else:
+            return "exit"
 
     def get_friend_name(self) -> str:
         """Print the friend name question and get user's response.
