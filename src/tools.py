@@ -46,6 +46,13 @@ def download_date_file_exists() -> bool:
     return path.exists(config.download_date)
 
 
+def session_cookies_file_exists() -> bool:
+    """Check if cookies.p file exists.
+    :return: boolean representing if the file exists
+    """
+    return path.exists(config.cookies_path)
+
+
 """ 
 Methods to parse, create, read from and write to the following files:
 - account_details.txt

@@ -11,6 +11,7 @@ from ics.grammar.parse import ContentLine
 import tools
 from os import path
 import exceptions
+import pickle
 
 
 class FBUser:
@@ -64,7 +65,7 @@ class FBUser:
         :return:    A dictionary mapping from uid to name, url, and photo url
         """
         friend_dict = {}
-        user_list = [user for user in self.client.fetchAllUsers() if
+        user_list = [user for user in self.client.get_contact_list() if
                      user.is_friend]
 
         for user in user_list:
@@ -219,10 +220,19 @@ class FBUser:
         print("User is logged out")
 
 
-def _login(self) -> Client:
+def _login(self) -> CustomClient:
     """ Helper method to login to a Facebook account using a username and
     password from account_details"""
-    return Client(self._username, self._password, max_tries=1)
+    if tools.session_cookies_file_exists():
+        cookies = pickle.load(open(config.cookies_path, 'rb'))
+        client = CustomClient(self._username, self._password, max_tries=1,
+                              session_cookies=cookies)
+    else:
+        client = CustomClient(self._username, self._password, max_tries=1)
+    session = client.getSession()
+    pickle.dump(session, open(config.cookies_path, 'wb'))
+    # client.listen()
+    return client
 
 
 def get_birthday_by_uid(uid: str, birthday_calendar: Calendar) -> Arrow:
@@ -310,3 +320,24 @@ def set_up_fbuser() -> FBUser:
     # create and return a new instance of FBUser
     user = FBUser(account_details[0], account_details[1], cal)
     return user
+
+
+class CustomClient(Client):
+    """CustomClient inherits from Client, to add on a method to get a list
+    of Facebook/Messenger friends."""
+
+    def get_contact_list(self):
+        """Returns all contacts (friends or non-friends) of the client.
+        Returns:
+            list: :class:`User` objects
+        Raises:
+            FBchatException: If request failed
+        """
+        data = {"viewer": self._uid}
+        j = self._payload_post("/chat/user_info_all", data)
+
+        users = []
+        for data in j.values():
+            if data["type"] in ["user", "friend"]:
+                users.append(User._from_all_fetch(data))
+        return users
