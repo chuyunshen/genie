@@ -1,6 +1,6 @@
 from PyInquirer import style_from_dict, Token, prompt
 from PyInquirer import Validator, ValidationError
-import datetime
+from datetime import datetime
 from prompt_toolkit.document import Document
 from fb_user import *
 
@@ -16,7 +16,7 @@ class DateValidator(Validator):
         :raises ValidationError: If document.text is not a valid date
         """
         try:
-            datetime.datetime.strptime(document.text, '%m-%d')
+            datetime.strptime(document.text, '%m-%d')
         except ValueError:
             raise ValidationError(
                 message="Please enter a valid date in the format of mm-dd.",
@@ -79,8 +79,8 @@ class Menu:
         {
             'type': 'input',
             'name': 'friend_birthday',
-            'message': 'Please enter your friend\'s birthday, '
-                       'in the format of mm-dd',
+            'message': "Please enter your friend's birthday, "
+                       "in the format of mm-dd",
             'validate': DateValidator,
         }]
 
@@ -125,8 +125,7 @@ class Menu:
                             url, and photo url.
         """
 
-        print("Welcome to Genie--your one-stop program for automated birthday"
-              "wishes.")
+        print("Welcome to Genie!")
         self.friends = friends
         self.friend_selection_question = [
             {
