@@ -216,8 +216,7 @@ class FBUser:
         raise NameError
 
     def logout(self) -> None:
-        """ Save session cookies and logout from a Facebook account"""
-        _save_session_cookies(self)
+        """ Logout from a Facebook account"""
         self.client.logout()
         print("User is logged out")
 
@@ -235,6 +234,7 @@ def _save_session_cookies(self) -> None:
 def _login(self) -> CustomClient:
     """ Helper method to login to a Facebook account using a username and
     password from account_details and, optionally, cookies.
+    Save session cookies.
     If cookies.txt does not exit, raise exception."""
     if not tools.session_cookies_file_exists():
         raise exceptions.CookiesFileNotFoundException
@@ -246,6 +246,8 @@ def _login(self) -> CustomClient:
     else:
         client = CustomClient(self._username, self._password, max_tries=1)
         print("fbchat client logged in without cookies.")
+    # save session cookies
+    _save_session_cookies(self)
     return client
 
 
