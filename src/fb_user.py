@@ -188,7 +188,7 @@ class FBUser:
             return
         # create a birthday event
         new_birthday_event = \
-            create_birthday_event(int(uid), name, birthday_date)
+            create_birthday_event(uid, name, birthday_date)
         # add a new event to the birthdays calendar
         self.birthday_calendar.events.add(new_birthday_event)
 
@@ -264,7 +264,7 @@ def get_birthday_by_uid(uid: str, birthday_calendar: Calendar) -> Arrow:
             return event.begin
 
 
-def create_birthday_event(uid: int, name: str,
+def create_birthday_event(uid: str, name: str,
                           birthday_date: datetime) -> Event:
     """ Create a birthday event with the provided parameters.
     :param uid:             Friend's FB UID
