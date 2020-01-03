@@ -133,12 +133,14 @@ def read_cookies() -> Dict:
     cookie = SimpleCookie()
     cookies = {}
     # read cookies
-    with open(config.cookies_path, 'r+') as f:
-        data = f.read().replace('\n', '')
+    with open(config.cookies_path, 'r+') as cookies_file:
+        data = cookies_file.read().replace('\n', '')
+        print(f"Cookies read from file: {data}")
     # create and return a Dict containing cookies
     cookie.load(data)
     for key, morsel in cookie.items():
         cookies[key] = morsel.value
+    print(f"Dict cookies: {cookies}")
     return cookies
 
 
