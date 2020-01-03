@@ -40,6 +40,8 @@ class FBUser:
         self._password = password
         self.birthday_calendar = cal
         self.client = _login(self)
+        # save session cookies
+        _save_session_cookies(self)
 
     def get_client(self) -> Client:
         """Return client object.
@@ -246,8 +248,6 @@ def _login(self) -> CustomClient:
     else:
         client = CustomClient(self._username, self._password, max_tries=1)
         print("fbchat client logged in without cookies.")
-    # save session cookies
-    _save_session_cookies(self)
     return client
 
 
