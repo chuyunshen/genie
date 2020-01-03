@@ -7,8 +7,8 @@ from ics import Calendar
 from fb2cal.src import fb2cal
 import random
 from datetime import datetime
-from http.cookies import SimpleCookie
 from typing import Dict
+import ast
 
 """ 
 Methods to check the following files existence:
@@ -130,16 +130,12 @@ def read_cookies() -> Dict:
     Read cookies from cookies.txt and return them as a Dict.
     :return:    cookies
     """
-    cookie = SimpleCookie()
-    cookies = {}
     # read cookies
     with open(config.cookies_path, 'r+') as cookies_file:
         data = cookies_file.read().replace('\n', '')
         print(f"Cookies read from file: {data}")
     # create and return a Dict containing cookies
-    cookie.load(data)
-    for key, morsel in cookie.items():
-        cookies[key] = morsel.value
+    cookies = ast.literal_eval(data)
     print(f"Dict cookies: {cookies}")
     return cookies
 
