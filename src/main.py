@@ -22,7 +22,8 @@ def main() -> None:
         with Switch(main_menu_choice) as case:
             if case("edit"):
                 birthday = menu.get_friend_birthday()
-                fb_user.add_friend_birthday(friend_uid, datetime(birthday))
+                fb_user.add_friend_birthday(
+                    friend_uid, datetime.strptime(birthday, '%m-%d'))
             if case("schedule"):
                 message = menu.get_birthday_message()
                 fb_user.schedule_birthday_message_for_uid(friend_uid, message)
