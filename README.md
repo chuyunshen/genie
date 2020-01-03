@@ -25,7 +25,8 @@ move Genie online.
 - [Demonstration](#demonstration)
 - [What's included](#whats-included)
 - [Documentation](#documentation)
-- [Creators](#creators)
+- [Tests](#tests)
+- [Questions and contributions](#questions-and-contributions)
 - [Thanks](#thanks)
 - [Copyright and license](#copyright-and-license)
 
@@ -35,17 +36,17 @@ move Genie online.
 * Clone the repository
 * Create a virtualenv in the project directory
 ```
-virtualenv env -p `which python3`
+$ virtualenv env -p `which python3`
 ```
 * Activate the virtualenv from the project dir for working in terminal
 ```
-source env/bin/activate
+$ source env/bin/activate
 ```
 (Also, setup the the project interpreter in PyCharm)
 
 * Install the project requirements by running
 ```
-pip install -r requirements.txt
+$ pip3 install -r requirements.txt
 ```
 
 * Create a file `account_details.txt` under `config` directory. 
@@ -57,19 +58,40 @@ Leave this file empty.
 * Create a file `cookies.txt` under `config` directory. 
 Leave this file empty.
 
+## How to Run
+```
+$ cd genie
+$ export PYTHONPATH='.'
+$ python3 src/main.py
+```
 ## Demonstration
-Add gifs here!
+<img src="https://imgur.com/6EaItVN.gif[/img]" alt="Main menu options" height="60">
+<br />
+<img src="https://imgur.com/GREH8Aw.gif[/img]" alt="Draft a birthday message" height="50">
+
+## Note 
+Our current version requires users to run the program every day to ensure
+the messages are delivered.
+
+If you are using a relatively new account, please visit the mobile site of 
+Facebook (m.facebook.com) to skip all the new-account welcome/set-up. Otherwise,
+the program may not be able to continue.
 
 ## Documentation
+
+## Tests
+To run tests:
 
 ## What's included
 ```
 genie
+├── LICENSE
 ├── README.md
 ├── config
 │   └── test
 ├── docs
 │   ├── funny_birthday_wish_template.txt
+│   ├── main_menu.gif
 │   └── serious_birthday_wish_template.txt
 ├── fb2cal
 │   ├── LICENSE
@@ -84,9 +106,11 @@ genie
 ├── requirements.txt
 └── src
     ├── config.py
+    ├── custom_client.py
     ├── exceptions.py
     ├── fb_user.py
     ├── main.py
+    ├── menu.py
     ├── settings.py
     ├── test
     │   ├── __init__.py
@@ -94,6 +118,12 @@ genie
     │   └── test_fbuser.py
     └── tools.py
 ```
-## Creators
 ## Thanks
+We thank Daniel Moran for reviewing our code and our Facebook bot Boris Petrov 
+for tirelessly testing the program.
+
+## Questions and Contributions 
+Feel free to open an issue and/or make a pull request.
+
 ## Copyright and License
+Genie is released under the [MIT License](https://opensource.org/licenses/MIT).
