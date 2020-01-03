@@ -299,7 +299,7 @@ def get_uid_by_name(name: str, friends: dict) -> List[str]:
     :param friends:    A dictionary mapping from uid to name, url, and photo url
     :return:           A list of uids
     """
-    uids = filter(lambda friend: name == friend[0], friends.values())
+    uids = [uid for uid in friends if friends[uid][0] == name]
     if uids:
         return list(uids)
     raise NameError

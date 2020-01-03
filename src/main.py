@@ -18,7 +18,7 @@ def main() -> None:
     menu = Menu(fb_user.get_friend_dict())
     while True:
         main_menu_choice = menu.get_main_menu_choice()
-        friend_uid = menu.get_friend_uid(fb_user)
+        friend_uid = menu.get_friend_uid(fb_user.get_friend_dict())
         with Switch(main_menu_choice) as case:
             if case("edit"):
                 birthday = menu.get_friend_birthday()

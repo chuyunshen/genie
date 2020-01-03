@@ -40,12 +40,12 @@ class StringValidator(Validator):
                 cursor_position=len(document.text))  # Move cursor to end
 
 
-def validate_name(name, friends: dict) -> None:
+def validate_name(name, friends: dict) -> bool:
     """Validate names.
     :param name:             Name to validate
     :param friends:          A dictionary of friends mapping from uid to name,
                              url, and photo url.
-    :returns:                None
+    :returns:                True if the name exists
     :raises ValidationError: If name does not exist in friends or is an empty
     string
     """
@@ -59,6 +59,7 @@ def validate_name(name, friends: dict) -> None:
         raise ValidationError(
             message="Please enter a non-empty input.",
             cursor_position=len(name))  # Move cursor to end
+    return True
 
 
 class Menu:
@@ -90,8 +91,8 @@ class Menu:
             'type': 'list',
             'name': 'birthday_message_type',
             'message': 'How would you like to generate the birthday message?',
-            'choices': ["1) Generate a random birthday message",
-                        "2) Draft a birthday message"],
+            'choices': ["Generate a random birthday message",
+                        "Draft a birthday message"],
         }]
 
     random_birthday_message_type_question = [
@@ -128,14 +129,17 @@ class Menu:
 
         print("Welcome to Genie!")
         self.friends = friends
+        friend_selection_choices = [uid + " " + self.friends[uid][1] for uid in
+                                    self.friends]
         self.friend_selection_question = [
             {
                 'type': 'list',
                 'name': 'friend_selection',
                 'message': 'There are multiple friends with the same name. '
-                           'Their Facebook profile pictures are included in '
-                           'the links.',
-                'choices': self.friends  # might not work, need an array
+                           'Their user ids and urls are presented. Please '
+                           'select one.',
+                'choices': friend_selection_choices,
+                'filter': lambda val: val.split(" ")[0]
             }]
 
         self.friend_name_question = [
@@ -183,19 +187,19 @@ class Menu:
         return prompt(self.friend_selection_question,
                       style=self.style)['friend_selection']
 
-    def get_friend_uid(self, fb_user: FBUser) -> str:
+    def get_friend_uid(self, friends) -> str:
         """
         Get an FB friend's name from the user input,
         search for this friend's UID among user's FB friends
         and, if found, return her/his uid.
         Otherwise, print out "Friend not found".
-        :param fb_user:     FB user to provide a friend's name
-        :return:            FB frind's UID
+        :param friends:     A dictionary of friends mapping from uid to name,
+                            url, and photo url.
+        :return:            Facebook friend's uid
         """
         try:
             friend_name = self.get_friend_name()
-            friend_uids = get_uid_by_name(friend_name,
-                                          fb_user.get_friend_dict())
+            friend_uids = get_uid_by_name(friend_name, friends)
             if len(friend_uids) > 1:
                 return self.get_friend_selection()
             else:
