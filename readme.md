@@ -54,6 +54,9 @@ This file should have two lines: Facebook username and Facebook password.
 * Create a file `download_date.txt` under `config` directory. 
 Leave this file empty.
 
+* Create a file `cookies.txt` under `config` directory. 
+Leave this file empty.
+
 ## Demonstration
 Add gifs here!
 

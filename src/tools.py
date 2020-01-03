@@ -7,6 +7,8 @@ from ics import Calendar
 from fb2cal.src import fb2cal
 import random
 from datetime import datetime
+from http.cookies import SimpleCookie
+from typing import Dict
 
 """ 
 Methods to check the following files existence:
@@ -46,7 +48,7 @@ def download_date_file_exists() -> bool:
 
 
 def session_cookies_file_exists() -> bool:
-    """Check if cookies.p file exists.
+    """Check if cookies.txt file exists.
     :return: boolean representing if the file exists
     """
     return path.exists(config.cookies_path)
@@ -121,6 +123,33 @@ def download_birthday_calendar() -> None:
             print("FB birthdays calendar is downloaded")
         else:
             print("FB birthdays calendar cannot be downloaded twice a day")
+
+
+def read_cookies() -> Dict:
+    """
+    Read cookies from cookies.txt and return them as a Dict.
+    :return:    cookies
+    """
+    cookie = SimpleCookie()
+    cookies = {}
+    # read cookies
+    with open(config.cookies_path, 'r+') as f:
+        data = f.read().replace('\n', '')
+    # create and return a Dict containing cookies
+    cookie.load(data)
+    for key, morsel in cookie.items():
+        cookies[key] = morsel.value
+    return cookies
+
+
+def save_cookies(cookies_dict: Dict) -> None:
+    """
+    Write cookies into cookies.txt
+    :param cookies_dict:    session cookies
+    :return:                None
+    """
+    with open(config.cookies_path, 'w') as f:
+        print(cookies_dict, file=f)
 
 
 def _read_wishes(wish_type: str) -> List[str]:

@@ -23,7 +23,7 @@ class FBUser:
     _username: str
     _password: str
     birthday_calendar: Calendar
-    client: Client
+    client: CustomClient
 
     def __init__(self, username: str, password: str, cal: Calendar) -> None:
         """ Initialize a new Facebook user with the username and
@@ -40,7 +40,6 @@ class FBUser:
         self._password = password
         self.birthday_calendar = cal
         self.client = _login(self)
-        print(f"{self.client.uid} is logged in")
 
     def get_client(self) -> Client:
         """Return client object.
@@ -217,23 +216,36 @@ class FBUser:
         raise NameError
 
     def logout(self) -> None:
-        """ Helper method to logout from a Facebook account"""
+        """ Save session cookies and logout from a Facebook account"""
+        _save_session_cookies(self)
         self.client.logout()
         print("User is logged out")
 
 
+def _save_session_cookies(self) -> None:
+    """
+    Get session cookies and save them into cookies.txt
+    :param self:    FBUser
+    :return:        None
+    """
+    new_cookies = self.client.getSession()
+    tools.save_cookies(new_cookies)
+
+
 def _login(self) -> CustomClient:
     """ Helper method to login to a Facebook account using a username and
-    password from account_details"""
-    if tools.session_cookies_file_exists():
-        cookies = pickle.load(open(config.cookies_path, 'rb'))
+    password from account_details and, optionally, cookies.
+    If cookies.txt does not exit, raise exception."""
+    if not tools.session_cookies_file_exists():
+        raise exceptions.CookiesFileNotFoundException
+    cookies = tools.read_cookies()
+    if cookies:
         client = CustomClient(self._username, self._password, max_tries=1,
                               session_cookies=cookies)
+        print("fbchat client logged in with cookies.")
     else:
         client = CustomClient(self._username, self._password, max_tries=1)
-    session = client.getSession()
-    pickle.dump(session, open(config.cookies_path, 'wb'))
-    # client.listen()
+        print("fbchat client logged in without cookies.")
     return client
 
 

@@ -10,5 +10,9 @@ class DownloadDateFileNotFoundException(Exception):
     pass
 
 
+class CookiesFileNotFoundException(Exception):
+    pass
+
+
 class FriendNotFoundException(Exception):
     pass
