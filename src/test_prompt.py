@@ -21,7 +21,7 @@ def main() -> None:
     menu = Menu(friends)
     while True:
         main_menu_choice = menu.get_main_menu_choice()
-        # friend_uid = menu.get_friend_uid(fb_user)
+        friend_uid = menu.get_friend_uid(friends)
         with Switch(main_menu_choice) as case:
             if case("edit"):
                 birthday = menu.get_friend_birthday()
@@ -30,7 +30,7 @@ def main() -> None:
                 message = menu.get_birthday_message()
                 # fb_user.schedule_birthday_message_for_uid(friend_uid, message)
             if case("exit"):
-                pass
+                break
                 # save_cal_and_logout(fb_user)
 
 
