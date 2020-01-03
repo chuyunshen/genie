@@ -187,7 +187,8 @@ class FBUser:
             print(f"UID {uid} is not in your friends list.")
             return
         # create a birthday event
-        new_birthday_event = create_birthday_event(uid, name, birthday_date)
+        new_birthday_event = \
+            create_birthday_event(int(uid), name, birthday_date)
         # add a new event to the birthdays calendar
         self.birthday_calendar.events.add(new_birthday_event)
 
