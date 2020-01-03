@@ -28,6 +28,7 @@ def main() -> None:
                 fb_user.schedule_birthday_message_for_uid(friend_uid, message)
             if case("exit"):
                 save_cal_and_logout(fb_user)
+                break
 
 
 if __name__ == "__main__":
