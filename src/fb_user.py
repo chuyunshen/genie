@@ -104,7 +104,7 @@ class FBUser:
         print(f"Today: {today}")
         for event in self.birthday_calendar.events:
             print(f"Event name: {event.name}, event date: {event.begin.date()}")
-            if event.description and today == event.begin.date():
+            if event.description and today.date() == event.begin.date():
                 print(f"Event name: {event.name}: send!")
                 self.send_scheduled_message(event)
 
@@ -351,7 +351,7 @@ def save_cal_and_logout(fb_user: FBUser):
     (2) Save calendar to the .ics file
     (3) Logout from fbchat
     """
-    today = datetime.today()
+    today = datetime.date.today()
     # Send scheduled birthday messages
     fb_user.send_all_scheduled_birthday_messages(today)
     # Save calendar to the .ics file
