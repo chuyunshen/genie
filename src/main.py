@@ -18,13 +18,14 @@ def main() -> None:
     menu = Menu(fb_user.get_friend_dict())
     while True:
         main_menu_choice = menu.get_main_menu_choice()
-        friend_uid = menu.get_friend_uid(fb_user.get_friend_dict())
         with Switch(main_menu_choice) as case:
             if case("edit"):
+                friend_uid = menu.get_friend_uid(fb_user.get_friend_dict())
                 birthday = menu.get_friend_birthday()
                 fb_user.add_friend_birthday(
                     friend_uid, datetime.strptime(birthday, '%m-%d'))
             if case("schedule"):
+                friend_uid = menu.get_friend_uid(fb_user.get_friend_dict())
                 message = menu.get_birthday_message()
                 fb_user.schedule_birthday_message_for_uid(friend_uid, message)
             if case("exit"):
