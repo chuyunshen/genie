@@ -15,10 +15,11 @@ def main() -> None:
     :return: None
     """
     fb_user = set_up_fbuser()
-    menu = Menu(fb_user.get_friend_dict())
+    friends = fb_user.get_friend_dict()
+    menu = Menu(friends)
     while True:
         main_menu_choice = menu.get_main_menu_choice()
-        friend_uid = menu.get_friend_uid(fb_user.get_friend_dict())
+        friend_uid = menu.get_friend_uid(friends)
         with Switch(main_menu_choice) as case:
             if case("edit"):
                 birthday = menu.get_friend_birthday()

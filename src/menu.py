@@ -127,7 +127,7 @@ class Menu:
                             url, and photo url.
         """
 
-        print("Welcome to Genie!")
+        print("🧞‍♀️ ‍Welcome to Genie!")
         self.friends = friends
         friend_selection_choices = [uid + " " + self.friends[uid][1] for uid in
                                     self.friends]

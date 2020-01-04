@@ -1,9 +1,6 @@
 from fbchat import Client, User
 
 
-# TODO @chuyunshen _from_all_fetch is a private method
-
-
 class CustomClient(Client):
     """CustomClient inherits from Client, to add on a method to get a list
     of Facebook/Messenger friends."""
