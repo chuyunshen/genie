@@ -351,7 +351,7 @@ def save_cal_and_logout(fb_user: FBUser):
     (2) Save calendar to the .ics file
     (3) Logout from fbchat
     """
-    today = datetime.date.today()
+    today = datetime.today()
     # Send scheduled birthday messages
     fb_user.send_all_scheduled_birthday_messages(today)
     # Save calendar to the .ics file
