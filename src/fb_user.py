@@ -100,8 +100,12 @@ class FBUser:
         """Checks and sends all scheduled birthday messages.
         :param today:   today's date
         """
+        print("Sending all messages")
+        print(f"Today: {today}")
         for event in self.birthday_calendar.events:
+            print(f"Event name: {event.name}, event date: {event.begin.date()}")
             if event.description and today == event.begin.date():
+                print(f"Event name: {event.name}: send!")
                 self.send_scheduled_message(event)
 
     def update_birthday_calendar(self) -> None:
