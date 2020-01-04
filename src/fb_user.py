@@ -40,6 +40,8 @@ class FBUser:
         self._password = password
         self.birthday_calendar = cal
         self.client = _login(self)
+        # save session cookies
+        _save_session_cookies(self)
 
     def get_client(self) -> Client:
         """Return client object.
@@ -98,8 +100,12 @@ class FBUser:
         """Checks and sends all scheduled birthday messages.
         :param today:   today's date
         """
+        print("Sending all messages")
+        print(f"Today: {today}")
         for event in self.birthday_calendar.events:
-            if event.description and today == event.begin.date():
+            print(f"Event name: {event.name}, event date: {event.begin.date()}")
+            if event.description and today.date() == event.begin.date():
+                print(f"Event name: {event.name}: send!")
                 self.send_scheduled_message(event)
 
     def update_birthday_calendar(self) -> None:
@@ -185,7 +191,8 @@ class FBUser:
             print(f"UID {uid} is not in your friends list.")
             return
         # create a birthday event
-        new_birthday_event = create_birthday_event(uid, name, birthday_date)
+        new_birthday_event = \
+            create_birthday_event(uid, name, birthday_date)
         # add a new event to the birthdays calendar
         self.birthday_calendar.events.add(new_birthday_event)
 
@@ -246,8 +253,6 @@ def _login(self) -> CustomClient:
     else:
         client = CustomClient(self._username, self._password, max_tries=1)
         print("fbchat client logged in without cookies.")
-    # save session cookies
-    _save_session_cookies(self)
     return client
 
 
@@ -263,7 +268,7 @@ def get_birthday_by_uid(uid: str, birthday_calendar: Calendar) -> Arrow:
             return event.begin
 
 
-def create_birthday_event(uid: int, name: str,
+def create_birthday_event(uid: str, name: str,
                           birthday_date: datetime) -> Event:
     """ Create a birthday event with the provided parameters.
     :param uid:             Friend's FB UID

@@ -6,7 +6,6 @@ from fb_user import get_birthday_by_uid, set_up_fbuser
 import arrow
 
 
-
 @pytest.fixture(scope="module")
 def setup():
     user = set_up_fbuser()
