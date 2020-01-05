@@ -3,15 +3,12 @@ from arrow import Arrow
 from fbchat import Client
 from fbchat.models import *
 from typing import Dict, List
-from fb2cal.src import fb2cal
 from ics import Calendar, Event
 from settings import *
 from dateutil.relativedelta import relativedelta
 from ics.grammar.parse import ContentLine
 import tools
-from os import path
 import exceptions
-import pickle
 from custom_client import CustomClient
 
 
@@ -100,12 +97,8 @@ class FBUser:
         """Checks and sends all scheduled birthday messages.
         :param today:   today's date
         """
-        print("Sending all messages")
-        print(f"Today: {today}")
         for event in self.birthday_calendar.events:
-            print(f"Event name: {event.name}, event date: {event.begin.date()}")
             if event.description and today.date() == event.begin.date():
-                print(f"Event name: {event.name}: send!")
                 self.send_scheduled_message(event)
 
     def update_birthday_calendar(self) -> None:
@@ -144,37 +137,6 @@ class FBUser:
                 # the friends list
                 if event.uid not in self.get_friend_dict():
                     self.birthday_calendar.events.remove(event)
-
-    # TODO Remove this method
-    # def set_birthday_by_uid(self, uid, birthday) -> None:
-    #     """Set the birthday for a friend by uid.
-    #     Args:
-    #         uid: str
-    #         birthday: datetime
-    #     """
-    #     # If the uid exists in the current birthday_calendar, we will delete
-    #     # the old event.
-    #     self.delete_birthday_by_uid(uid)
-    #     # Initialize birthday_event to a new event
-    #     birthday_event = Event()
-    #     birthday_event.uid = uid
-    #     birthday_event.name = "{}'s Birthday".format(
-    #         self.get_friend_dict()[uid][0])
-    #
-    #     today = datetime.today()
-    #     # Calculate the year as this year or next year based on if its past
-    #     # current month or not
-    #     year = today.year if birthday.month >= today.month else (
-    #             today + relativedelta(years=1)).year
-    #     # Pad day, month with leading zeros to 2dp
-    #     month = '{:02d}'.format(birthday.month)
-    #     day = '{:02d}'.format(birthday.day)
-    #     birthday_event.begin = f'{year}-{month}-{day} 00:00:00'
-    #     birthday_event.make_all_day()
-    #     birthday_event.duration = timedelta(days=1)
-    #     birthday_event.extra.append(
-    #         ContentLine(name='RRULE', value='FREQ=YEARLY'))
-    #     self.birthday_calendar.events.add(birthday_event)
 
     def add_friend_birthday(self, uid: str, birthday_date: datetime) -> None:
         """
