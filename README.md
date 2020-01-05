@@ -77,10 +77,6 @@ If you are using a relatively new account, please visit the mobile site of
 Facebook (m.facebook.com) to skip all the new-account welcome/set-up. Otherwise,
 the program may not be able to continue.
 
-## Documentation
-
-## Tests
-To run tests:
 
 ## What's included
 ```
