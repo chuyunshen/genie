@@ -1,7 +1,7 @@
 <p align="center">
-  
+
 <img src="https://imgur.com/ErP9Ujr.png[/img]" alt="Genie Logo" height="72">
-  
+
 </p>
 
 <h3 align="center">Genie</h3>
@@ -9,14 +9,14 @@
 <p align="center">
 Why remember birthdays when Genie can grant wishes to all your Facebook friends?  <br>
   </p>
-  
+
 Genie logs users in onto Facebook and fetches birthday information. Users can
 draft or select random birthday wish messages that will be automatically sent on
 friends' birthdays.
 
-Genie is built on [Python](https://www.tensorflow.org/api_docs/python).
+Genie is built on Python.
 
-For our next steps, we would like to integrate holidays, be cross-platform, and 
+For our next steps, we would like to integrate holidays, be cross-platform, and
 move Genie online.
 
 ## Table of contents
@@ -24,8 +24,6 @@ move Genie online.
 - [Quick Start](#quick-start)
 - [Demonstration](#demonstration)
 - [What's included](#whats-included)
-- [Documentation](#documentation)
-- [Tests](#tests)
 - [Questions and contributions](#questions-and-contributions)
 - [Thanks](#thanks)
 - [Copyright and license](#copyright-and-license)
@@ -49,13 +47,13 @@ $ source env/bin/activate
 $ pip3 install -r requirements.txt
 ```
 
-* Create a file `account_details.txt` under `config` directory. 
+* Create a file `account_details.txt` under `config` directory.
 This file should have two lines: Facebook username and Facebook password.
 
-* Create a file `download_date.txt` under `config` directory. 
+* Create a file `download_date.txt` under `config` directory.
 Leave this file empty.
 
-* Create a file `cookies.txt` under `config` directory. 
+* Create a file `cookies.txt` under `config` directory.
 Leave this file empty.
 
 ## How to Run
@@ -69,11 +67,11 @@ $ python3 src/main.py
 <br />
 <img src="https://imgur.com/GREH8Aw.gif[/img]" alt="Draft a birthday message" height="50">
 
-## Note 
+## Note
 Our current version requires users to run the program every day to ensure
 the messages are delivered.
 
-If you are using a relatively new account, please visit the mobile site of 
+If you are using a relatively new account, please visit the mobile site of
 Facebook (m.facebook.com) to skip all the new-account welcome/set-up. Otherwise,
 the program may not be able to continue.
 
@@ -115,10 +113,10 @@ genie
     └── tools.py
 ```
 ## Thanks
-We thank Daniel Moran for reviewing our code and our Facebook bot Boris Petrov 
+We thank Daniel Moran for reviewing our code and our Facebook bot Boris Petrov
 for tirelessly testing the program.
 
-## Questions and Contributions 
+## Questions and Contributions
 Feel free to open an issue and/or make a pull request.
 
 ## Copyright and License
