@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import Dict
 import ast
 
-""" 
+"""
 Methods to check the following files existence:
 - account_details.txt
 - download_date.txt
@@ -54,7 +54,7 @@ def session_cookies_file_exists() -> bool:
     return path.exists(config.cookies_path)
 
 
-""" 
+"""
 Methods to parse, create, read from and write to the following files:
 - account_details.txt
 - download_date.txt
@@ -134,10 +134,13 @@ def read_cookies() -> Dict:
     with open(config.cookies_path, 'r+') as cookies_file:
         data = cookies_file.read().replace('\n', '')
         print(f"Cookies read from file: {data}")
-    # create and return a Dict containing cookies
-    cookies = ast.literal_eval(data)
-    print(f"Dict cookies: {cookies}")
-    return cookies
+    if data:
+        # create and return a Dict containing cookies
+        cookies = ast.literal_eval(data)
+        print(f"Dict cookies: {cookies}")
+        return cookies
+    else:
+        return None
 
 
 def save_cookies(cookies_dict: Dict) -> None:
